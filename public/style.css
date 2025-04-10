@@ -76,15 +76,15 @@ button:hover{
 }
 
 .modal-content input{
-    background-color: #8c8c8c;
+    background-color:  #cccccc;
     border: 0px;
     border-radius: 5px;
     padding: 10px;
-    color: white;
+    color: #737373;
 }
 
 .auth-modal input::placeholder{
-    color: #cccccc;
+    color: #999999;
 }
 
 .acc-buttons {
