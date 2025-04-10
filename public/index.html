@@ -16,10 +16,44 @@
             <div class="navdiv">
                 <div class="logo"><a href="#">Cramio</a></div>
                 <ul>
-                    <button><a href="#">Signup</a></button>
-                    <button><a href="#">Login</a></button>
+                    <button onclick="showModal('signupModal')">Signup</button>
+                    <button onclick="showModal('loginModal')">Login</button>
                 </ul>
             </div>
     </header>
+
+        <!-- Signup Modal -->
+    <div id="signupModal" class="auth-modal">
+        <div class="modal-content">
+            <h2>Sign Up</h2>
+            <input type="email" id="signupEmail" placeholder="Email">
+            <input type="password" id="signupPassword" placeholder="Password">
+            <div class="acc-buttons">
+                <button onclick="signup()">Create Account</button>
+                <button onclick="closeModal('signupModal')">Cancel</button>
+              </div>               
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="loginModal" class="auth-modal">
+        <div class="modal-content">
+            <h2>Login</h2>
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <div class="acc-buttons">
+                <button onclick="login()">Login</button>
+                <button onclick="closeModal('loginModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup" class="popup">Signup successful!</div>
+    <div id="popup" class="popup">Login successful!</div>
+    <div id="popup-error" class="popup-error">Signup error!</div>
+    <div id="popup-error" class="popup-error">Invalid Login Information!</div>
+  
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
