@@ -151,10 +151,14 @@ window.addFlashcard = async function() {
   const answer = document.getElementById('answerInput').value.trim();
   const user = auth.currentUser;
 
+  const addButton = document.getElementById('addFlashcardButton')
+
   if (!user || !subject || !question || !answer) {
       showErrorPopup("Please fill in all fields.");
       return;
   }
+
+  addButton.disabled = true;
 
   try {
       await addDoc(collection(db, "flashcards"), {
@@ -180,6 +184,8 @@ window.addFlashcard = async function() {
   } catch (error) {
       showErrorPopup("Error saving flashcard.");
       console.error(error);
+  }finally{
+    addButton.disabled = false;
   }
 };
 
