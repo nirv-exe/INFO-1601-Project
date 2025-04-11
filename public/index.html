@@ -25,7 +25,7 @@
 
         <section id="homepage" class="homepage">
             <div class="home-data">
-                <h1>Welcome to Cramio</h1>
+                <h1>Welcome to Cram.io</h1>
                 <p>Your personalized flashcard tool for smart studying.</p>
                 <div class="home-buttons">
                     <button onclick="showModal('signupModal')">Get Started</button>
@@ -133,6 +133,29 @@
                 <button id="prevCardBtn" class="nav-button prev-button">← Previous</button>
                 <button id="nextCardBtn" class="nav-button next-button">Next →</button>
                 <button id="endStudyBtn" class="nav-button end-button">End Study Session</button>
+            </div>
+        </div>
+
+        <div id="editSubjectModal" class="auth-modal">
+            <div class="modal-content">
+                <h2>Edit Subject</h2>
+                <input type="text" id="editSubjectInput" placeholder="Subject Name">
+                <div class="modal-buttons">
+                    <button class="confirm-btn" id="saveSubjectBtn">Save</button>
+                    <button class="cancel-btn" onclick="closeModal('editSubjectModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="editFlashcardModal" class="auth-modal">
+            <div class="modal-content">
+                <h2>Edit Flashcard</h2>
+                <input type="text" id="editQuestionInput" placeholder="Question">
+                <input type="text" id="editAnswerInput" placeholder="Answer">
+                <div class="modal-buttons">
+                    <button class="confirm-btn" id="saveEditBtn">Save</button>
+                    <button class="cancel-btn" onclick="closeModal('editFlashcardModal')">Cancel</button>
+                </div>
             </div>
         </div>
 

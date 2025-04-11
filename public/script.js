@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, updateDoc} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { doc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
@@ -239,6 +239,23 @@ function showDeleteConfirmation(subject) {
     });
 }
 
+async function updateSubjectName(oldSubject, newSubject) {
+    const q = query(
+        collection(db, "flashcards"),
+        where("uid", "==", auth.currentUser.uid),
+        where("subject", "==", oldSubject)
+    );
+
+    const snapshot = await getDocs(q);
+    const updatePromises = [];
+
+    snapshot.forEach(doc => {
+        updatePromises.push(updateDoc(doc.ref, { subject: newSubject }));
+    });
+
+    await Promise.all(updatePromises);
+}
+
 function displaySubjects(subjects) {
     const container = document.getElementById('subjectsContainer');
     if (!container) {
@@ -260,6 +277,7 @@ function displaySubjects(subjects) {
             <span class="subject-name">${subject}</span>
             <div class="menu-dots">⋮</div>
             <div class="delete-option">
+                <span class="edit-subject-btn" data-subject="${subject}">Edit</span>
                 <span class="delete-btn" data-subject="${subject}">Delete</span>
             </div>
         `;
@@ -284,6 +302,10 @@ function displaySubjects(subjects) {
                 dropdown.classList.toggle('show');
             });
         }
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.delete-option').forEach(d => d.classList.remove('show'));
+        });
         
         const deleteBtn = subjectElement.querySelector('.delete-btn');
         if (deleteBtn) {
@@ -291,6 +313,29 @@ function displaySubjects(subjects) {
                 e.stopPropagation();
                 showDeleteConfirmation(subject);
                 if (dropdown) dropdown.classList.remove('show');
+            });
+        }
+
+        const editSubjectBtn = subjectElement.querySelector('.edit-subject-btn');
+        if (editSubjectBtn) {
+            editSubjectBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('editSubjectInput').value = subject;
+                document.getElementById('editSubjectModal').style.display = 'block';
+
+                document.getElementById('saveSubjectBtn').onclick = async () => {
+                    const newSubject = document.getElementById('editSubjectInput').value;
+
+                    try {
+                        await updateSubjectName(subject, newSubject);
+                        showPopup("Subject updated successfully");
+                        closeModal('editSubjectModal');
+                        loadUserSubjects(auth.currentUser.uid); // Refresh the list
+                    } catch (error) {
+                        showErrorPopup("Error updating subject");
+                        console.error(error);
+                    }
+                };
             });
         }
     });
@@ -304,7 +349,8 @@ async function viewFlashcards(subject) {
         const q = query(
             collection(db, "flashcards"),
             where("uid", "==", auth.currentUser.uid),
-            where("subject", "==", subject)
+            where("subject", "==", subject),
+            orderBy("createdAt", "asc")
         );
         
         const snapshot = await getDocs(q);
@@ -321,6 +367,7 @@ async function viewFlashcards(subject) {
         });
         
         displayFlashcards(subject, flashcards);
+        showPopup("Successfully loaded Flashcards!");
     } catch (error) {
         console.error("Error loading flashcards:", error);
         showErrorPopup("Error loading flashcards");
@@ -345,6 +392,7 @@ function displayFlashcards(subject, flashcards) {
                 <div class="flashcard-answer">${flashcard.answer}</div>
                 <div class="flashcard-menu">⋮</div>
                 <div class="flashcard-menu-dropdown">
+                    <span class="edit-flashcard" data-id="${flashcard.id}">Edit</span>
                     <span class="delete-flashcard" data-id="${flashcard.id}">Delete</span>
                 </div>
             `;
@@ -380,6 +428,35 @@ function displayFlashcards(subject, flashcards) {
                             console.error(error);
                         }
                     });
+                });
+            }
+
+            const editBtn = card.querySelector('.edit-flashcard');
+            if (editBtn) {
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.getElementById('editQuestionInput').value = flashcard.question;
+                    document.getElementById('editAnswerInput').value = flashcard.answer;
+                    document.getElementById('editFlashcardModal').style.display = 'block';
+
+                    document.getElementById('saveEditBtn').onclick = async () => {
+                        const newQuestion = document.getElementById('editQuestionInput').value;
+                        const newAnswer = document.getElementById('editAnswerInput').value;
+
+                        try {
+                            const flashcardRef = doc(db, "flashcards", flashcard.id);
+                            await updateDoc(flashcardRef, {
+                                question: newQuestion,
+                                answer: newAnswer
+                            });
+                            showPopup("Flashcard updated successfully");
+                            closeModal('editFlashcardModal');
+                            viewFlashcards(subject); // Refresh the view
+                        } catch (error) {
+                            showErrorPopup("Error updating flashcard");
+                            console.error(error);
+                        }
+                    };
                 });
             }
         });
@@ -461,6 +538,7 @@ async function loadStudyDeck(subject) {
 
 const flashcard = document.getElementById('studyFlashcard');
 const studyAnswer = document.getElementById('studyAnswer');
+const nextBtn = document.getElementById('nextCardBtn')
 
 flashcard.addEventListener('click', () => {
     flashcard.classList.toggle('flipped');
@@ -476,6 +554,7 @@ flashcard.addEventListener('click', () => {
 function loadStudyCard() {
     if (studySessionCards.length === 0) return;
 
+    nextBtn.disabled = false;
     const card = studySessionCards[currentCardIndex];
     document.getElementById('studyQuestion').textContent = card.question;
     document.getElementById('studyAnswer').textContent = card.answer;
@@ -523,11 +602,15 @@ function checkAnswer() {
     const userAnswer = document.getElementById('userAnswerInput').value;
     const correctAnswer = studySessionCards[currentCardIndex].answer;
     const feedback = document.getElementById('answerFeedback');
+    nextBtn.disabled = true;
 
     if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
         feedback.textContent = "✅ Correct!";
         feedback.className = "feedback-message feedback-correct";
-        correctAnswers++;
+        if (currentCardIndex <= studySessionCards.length - 1)
+        {    
+            correctAnswers++;
+        }
     } else {
         feedback.textContent = `❌ Incorrect! The answer was: ${correctAnswer}`;
         feedback.className = "feedback-message feedback-incorrect";
@@ -553,11 +636,14 @@ document.getElementById('prevCardBtn').addEventListener('click', () => {
 
 document.getElementById('nextCardBtn').addEventListener('click', () => {
 
+    nextBtn.disabled = true;
     checkAnswer();
 
     setTimeout(() => { // Add a delay
+        
         if (currentCardIndex < studySessionCards.length - 1) {
             currentCardIndex++;
+            nextBtn.disabled = false;
             loadStudyCard();
         } else {
             showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);

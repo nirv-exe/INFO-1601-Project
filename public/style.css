@@ -353,11 +353,13 @@ button:hover{
     display: none;
     z-index: 10;
     transition: all 0.3s ease;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .menu-dots:hover + .delete-option,
 .delete-option:hover {
-    display: block;
+    display: flex;
 }
 
 .menu-dots:hover{
@@ -367,7 +369,7 @@ button:hover{
     -moz-box-shadow: 0px 0px 12px -1px rgba(0,0,0,0.27);
 }
 
-.delete-option:hover{
+.delete-btn:hover{
     background-color: #d9d9d9;
     font-weight: bold;
 }
@@ -376,6 +378,21 @@ button:hover{
     color: #ff4444;
     cursor: pointer;
     white-space: nowrap;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.edit-subject-btn:hover{
+    background-color: #d9d9d9;
+    font-weight: bold;
+}
+
+.edit-subject-btn {
+    color: #0066ff;
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 5px;
+    border-radius: 8px;
 }
 
 /*flashcard styles*/
@@ -420,6 +437,22 @@ button:hover{
 
 .flashcard-menu-dropdown.show{
     display: block;
+}
+
+.edit-flashcard {
+    color: #0066ff; /* Blue color for the Edit button */
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
+    display: block;
+    text-align: center;
+}
+
+.edit-flashcard:hover {
+    background-color: #d9d9d9;
+    font-weight: bold;
 }
 
 .delete-flashcard {
