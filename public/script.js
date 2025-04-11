@@ -555,7 +555,6 @@ flashcard.addEventListener('click', () => {
 function loadStudyCard() {
     if (studySessionCards.length === 0) return;
 
-    nextBtn.disabled = false;
     const card = studySessionCards[currentCardIndex];
     document.getElementById('studyQuestion').textContent = card.question;
     document.getElementById('studyAnswer').textContent = card.answer;
@@ -579,6 +578,7 @@ function loadStudyCard() {
     const endStudyBtn = document.getElementById('endStudyBtn');
 
     answerInput.addEventListener('click', (event) => event.stopPropagation());
+    checkAnswerBtn.addEventListener('click', (event) => event.stopPropagation());
     prevCardBtn.addEventListener('click', (event) => event.stopPropagation());
     nextCardBtn.addEventListener('click', (event) => event.stopPropagation());
     endStudyBtn.addEventListener('click', (event) => event.stopPropagation());
@@ -592,6 +592,15 @@ function normalizeAnswer(answer) {
         .trim();                   // Trim whitespace
 }
 
+// Check user's answer
+document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
+document.getElementById('userAnswerInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkAnswer();
+});
+
+const nextButton = document.getElementById('nextCardBtn');
+nextButton.disabled = false;
+
 function checkAnswer() {
     const userAnswer = document.getElementById('userAnswerInput').value;
     const correctAnswer = studySessionCards[currentCardIndex].answer;
@@ -603,11 +612,31 @@ function checkAnswer() {
         if (currentCardIndex <= studySessionCards.length - 1)
         {    
             correctAnswers++;
+            nextButton.disabled = true
+            setTimeout(() => {
+                if (currentCardIndex < studySessionCards.length - 1) {
+                    currentCardIndex++;
+                    nextButton.disabled = false;
+                    loadStudyCard();
+                } else {
+                    showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
+                    endStudySession();
+                }
+            }, 1500)
         }
     } else {
         feedback.textContent = `❌ Incorrect! The answer was: ${correctAnswer}`;
         feedback.className = "feedback-message feedback-incorrect";
         wrongAnswers++;
+        setTimeout(() => {
+            if (currentCardIndex < studySessionCards.length - 1) {
+                currentCardIndex++;
+                loadStudyCard();
+            } else {
+                showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
+                endStudySession();
+            }
+        }, 3000)
     }
 
     document.getElementById('studyStats').textContent = `✅ ${correctAnswers} ❌ ${wrongAnswers}`;
@@ -622,23 +651,18 @@ document.getElementById('prevCardBtn').addEventListener('click', () => {
     }
 });
 
-document.getElementById('nextCardBtn').addEventListener('click', () => {
 
-    nextBtn.disabled = true;
-    checkAnswer();
-
-    setTimeout(() => { // Add a delay
-        
-        if (currentCardIndex < studySessionCards.length - 1) {
-            currentCardIndex++;
-            nextBtn.disabled = false;
-            loadStudyCard();
-        } else {
-            showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
-            endStudySession();
-        }
-    }, 1500);
+document.getElementById('nextCardBtn').addEventListener('click', () => { 
+    if (currentCardIndex < studySessionCards.length - 1) {
+        currentCardIndex++;
+        loadStudyCard();
+    } else {
+        showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
+        endStudySession();
+    }
 });
+
+
 
 // End study session
 document.getElementById('endStudyBtn').addEventListener('click', endStudySession);
@@ -694,5 +718,5 @@ async function closeBtn() {
         if (summaryWrapper) {
             summaryWrapper.remove();
         }
-    }, 5000);
+    }, 5000); 
 }
