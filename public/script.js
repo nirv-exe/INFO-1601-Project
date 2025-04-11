@@ -401,3 +401,209 @@ async function deleteFlashcard(flashcardId) {
         throw error;
     }
 }
+
+// Study Mode Variables
+let currentStudyDeck = [];
+let currentCardIndex = 0;
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let studySessionCards = [];
+
+// Initialize Study Mode
+document.getElementById('studyBtn').addEventListener('click', startStudySession);
+
+function startStudySession() {
+    const subject = document.getElementById('currentSubjectTitle').textContent.replace('Subject: ', '');
+    loadStudyDeck(subject);
+}
+
+async function loadStudyDeck(subject) {
+    try {
+        const q = query(
+            collection(db, "flashcards"),
+            where("uid", "==", auth.currentUser.uid),
+            where("subject", "==", subject)
+        );
+        
+        const snapshot = await getDocs(q);
+        currentStudyDeck = [];
+        
+        snapshot.forEach(doc => {
+            currentStudyDeck.push({
+                id: doc.id,
+                question: doc.data().question,
+                answer: doc.data().answer
+            });
+        });
+
+        if (currentStudyDeck.length === 0) {
+            showErrorPopup("No flashcards found for this subject");
+            return;
+        }
+
+        // Shuffle the deck for study
+        studySessionCards = currentStudyDeck.slice().sort(() => Math.random() - 0.5);
+        currentCardIndex = 0;
+        correctAnswers = 0;
+        wrongAnswers = 0;
+
+        // Show study mode
+        document.getElementById('flashcardsView').style.display = 'none';
+        document.getElementById('studyMode').style.display = 'block';
+        document.getElementById('currentSubject').textContent = subject;
+
+        loadStudyCard();
+    } catch (error) {
+        console.error("Error loading study deck:", error);
+        showErrorPopup("Error loading flashcards");
+    }
+}
+
+const flashcard = document.getElementById('studyFlashcard');
+const studyAnswer = document.getElementById('studyAnswer');
+
+flashcard.addEventListener('click', () => {
+    flashcard.classList.toggle('flipped');
+    
+    // Toggle answer visibility
+    if (flashcard.classList.contains('flipped')) {
+        studyAnswer.style.display = 'flex';
+    } else {
+        studyAnswer.style.display = 'none';
+    }
+});
+
+function loadStudyCard() {
+    if (studySessionCards.length === 0) return;
+
+    const card = studySessionCards[currentCardIndex];
+    document.getElementById('studyQuestion').textContent = card.question;
+    document.getElementById('studyAnswer').textContent = card.answer;
+    document.getElementById('userAnswerInput').value = '';
+    document.getElementById('answerFeedback').textContent = '';
+    document.getElementById('answerFeedback').className = '';
+    document.getElementById('cardPosition').textContent = `${currentCardIndex + 1}/${studySessionCards.length}`;
+    document.getElementById('studyStats').textContent = `✅ ${correctAnswers} ❌ ${wrongAnswers}`;
+    document.getElementById('studyFlashcard').classList.remove('flipped');
+
+    // Focus input
+    document.getElementById('userAnswerInput').focus();
+
+    studyAnswer.style.display = 'none';
+
+    // Prevent clicks within input/buttons from flipping the card
+    const answerInput = document.getElementById('userAnswerInput');
+    const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+    const prevCardBtn = document.getElementById('prevCardBtn');
+    const nextCardBtn = document.getElementById('nextCardBtn');
+    const endStudyBtn = document.getElementById('endStudyBtn');
+
+    answerInput.addEventListener('click', (event) => event.stopPropagation());
+    checkAnswerBtn.addEventListener('click', (event) => event.stopPropagation());
+    prevCardBtn.addEventListener('click', (event) => event.stopPropagation());
+    nextCardBtn.addEventListener('click', (event) => event.stopPropagation());
+    endStudyBtn.addEventListener('click', (event) => event.stopPropagation());
+}
+
+// Normalize answer for comparison
+function normalizeAnswer(answer) {
+    return answer.toLowerCase()
+        .replace(/[^\w\s]|_/g, '') // Remove punctuation
+        .replace(/\s+/g, ' ')      // Collapse multiple spaces
+        .trim();                   // Trim whitespace
+}
+
+// Check user's answer
+document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
+document.getElementById('userAnswerInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkAnswer();
+});
+
+function checkAnswer() {
+    const userAnswer = document.getElementById('userAnswerInput').value;
+    const correctAnswer = studySessionCards[currentCardIndex].answer;
+    const feedback = document.getElementById('answerFeedback');
+
+    if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
+        feedback.textContent = "✅ Correct!";
+        feedback.className = "feedback-message feedback-correct";
+        correctAnswers++;
+    } else {
+        feedback.textContent = `❌ Incorrect! The answer was: ${correctAnswer}`;
+        feedback.className = "feedback-message feedback-incorrect";
+        wrongAnswers++;
+    }
+
+    document.getElementById('studyStats').textContent = `✅ ${correctAnswers} ❌ ${wrongAnswers}`;
+    document.getElementById('studyAnswer').style.display = 'none';
+}
+
+// Show answer button
+document.getElementById('showAnswerBtn').addEventListener('click', () => {
+    document.getElementById('studyFlashcard').classList.add('flipped');
+});
+
+// Navigation buttons
+document.getElementById('prevCardBtn').addEventListener('click', () => {
+    if (currentCardIndex > 0) {
+        currentCardIndex--;
+        loadStudyCard();
+    }
+});
+
+document.getElementById('nextCardBtn').addEventListener('click', () => {
+
+    checkAnswer();
+
+    setTimeout(() => { // Add a delay
+        if (currentCardIndex < studySessionCards.length - 1) {
+            currentCardIndex++;
+            loadStudyCard();
+        } else {
+            showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
+            endStudySession();
+        }
+    }, 1500);
+});
+
+// End study session
+document.getElementById('endStudyBtn').addEventListener('click', endStudySession);
+
+function endStudySession() {
+    document.getElementById('studyMode').style.display = 'none';
+    document.getElementById('flashcardsView').style.display = 'block';
+
+    displayStudySummary();
+
+    const score = (correctAnswers / studySessionCards.length) * 100;
+
+    if (score < 50) {
+        showErrorPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length} (${score.toFixed(2)}%). Try again!`, false);
+    } else {
+        showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length} (${score.toFixed(2)}%).`);
+    }
+}
+
+function displayStudySummary() {
+    const summaryContainer = document.createElement('div');
+    summaryContainer.innerHTML = `
+        <div>
+            <h2>Study Session Summary</h2>
+            <p>Total Cards: ${studySessionCards.length}</p>
+            <p>Correct: ${correctAnswers}</p>
+            <p>Wrong: ${wrongAnswers}</p>
+            <button id="closeSummaryBtn" class="closeBtn">Close</button>
+        </div>
+    `;
+
+    const summaryWrapper = document.createElement('div');
+    summaryWrapper.id = 'studySummaryWrapper';
+    summaryWrapper.appendChild(summaryContainer);
+
+    document.querySelector('.main').appendChild(summaryWrapper);
+
+    // Add event listener to close button
+    document.getElementById('closeSummaryBtn').addEventListener('click', () => {
+        document.getElementById('studySummaryWrapper').remove();
+    });
+}

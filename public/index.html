@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar">
             <div class="navdiv">
-                <div id="logolink" class="logo"><a href="#">Cramio</a></div>
+                <div id="logolink" class="logo"><a href="#">Cram.io</a></div>
                 <ul>
                     <button id="createBtn" style="display: none;" onclick="showModal('flashcardModal')">Create Flashcard</button>
                     <button id="logoutBtn" style="display: none;" onclick="logout()">Logout</button>
@@ -96,6 +96,43 @@
                     <button id="confirmModalYes" class="confirm-btn">Yes</button>
                     <button id="confirmModalNo" class="cancel-btn">No</button>
                 </div>
+            </div>
+        </div>
+
+       <!-- Study Mode -->
+        <div id="studyMode" class="study-container" style="display: none;">
+            <div class="study-header">
+                <h2>Studying: <span id="currentSubject" class="subject-title">Subject</span></h2>
+                <div class="study-progress">
+                    <span id="cardPosition" class="card-counter">1/10</span>
+                    <span id="studyStats" class="stats-counter">✅ 0 ❌ 0</span>
+                </div>
+            </div>
+
+            <div class="flashcard-container">
+                <div class="flashcard" id="studyFlashcard">
+                    <div class="flashcard-front" id="studyQuestion">
+                        <h3>Question will appear here</h3>
+                    </div>
+                    <div class="flashcard-back" id="studyAnswer">
+                        <h3>Answer will appear here</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="answer-section">
+                <input type="text" id="userAnswerInput" placeholder="Type your answer..." class="answer-input">
+                <div class="answer-buttons">
+                    <button id="checkAnswerBtn" class="check-button">Check Answer</button>
+                    <button id="showAnswerBtn" class="show-button">Show Answer</button>
+                </div>
+                <div id="answerFeedback" class="feedback-message"></div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button id="prevCardBtn" class="nav-button prev-button">← Previous</button>
+                <button id="nextCardBtn" class="nav-button next-button">Next →</button>
+                <button id="endStudyBtn" class="nav-button end-button">End Study Session</button>
             </div>
         </div>
 

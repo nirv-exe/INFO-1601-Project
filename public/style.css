@@ -55,6 +55,7 @@ button{
     color: #333;
     font-weight:600;
     font-size: 1em;
+    cursor: pointer;
 }
 
 button:hover{
@@ -503,4 +504,226 @@ button:hover{
     border-radius: 5px;
     cursor: pointer;
     margin-right: 10px;
+}
+
+/* Study Mode Container */
+.study-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    margin-top: 0;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+}
+
+/* Header Section */
+.study-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.subject-title {
+    color: #0066ff;
+    font-weight: 600;
+}
+
+.study-progress {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.card-counter, .stats-counter {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Flashcard Styling */
+.flashcard-container {
+    display: flex;
+    perspective: 1000px;
+    margin: 2rem 0;
+}
+
+.flashcard {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    cursor: pointer;
+}
+
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.flashcard-front {
+    background: #f8f9fa;
+    border: 2px solid #0066ff;
+}
+
+.flashcard-back {
+    background: #0066ff;
+    color: white;
+    transform: rotateY(180deg);
+    display: flex; /* Flexbox for centering */
+    align-items: center; /* Vertically center the content */
+    justify-content: center; /* Horizontally center the content */
+    text-align: center; /* Center-align the text */
+    padding: 2rem; /* Add padding for spacing */
+    border-radius: 10px; /* Keep the rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    height: 100%; /* Ensure it fills the card */
+    width: 100%; /* Ensure it fills the card */
+    position: absolute; /* Ensure proper positioning */
+}
+
+.flashcard.flipped {
+    transform: rotateY(180deg);
+}
+
+/* Answer Section */
+.answer-section {
+    margin: 2rem 0;
+}
+
+.answer-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.answer-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.check-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.show-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* Feedback Message */
+.feedback-message {
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.feedback-correct {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.feedback-incorrect {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.nav-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.prev-button {
+    background-color: #FF9800;
+    color: white;
+}
+
+.next-button {
+    background-color: #0066ff;
+    color: white;
+}
+
+.end-button {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Button Hover Effects */
+.check-button:hover { 
+    background-color: #45a049; 
+}
+
+.show-button:hover { 
+    background-color: #0b7dda; 
+}
+
+.prev-button:hover {
+    background-color: #e68a00; 
+}
+
+.next-button:hover { 
+    background-color: #0052cc; 
+}
+
+.end-button:hover { 
+    background-color: #d32f2f; 
+}
+
+#studySummaryWrapper {
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    max-width: 600px;
+    color: #333;
+    font-family: "Lexend", sans-serif;
+}
+
+#studySummaryWrapper h2 {
+    margin-bottom: 15px;
+}
+
+#studySummaryWrapper p {
+    margin: 5px 0;
+}
+
+.closeBtn{
+    margin-top: 10px;
+    background-color: #d32f2f;
+    color: white;
+}
+
+.closeBtn:hover{
+    background-color: #db5757;
 }
