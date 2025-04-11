@@ -71,6 +71,20 @@ button:hover{
     height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.5);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes myAnim {
+	0% {
+		opacity: 0;
+		transform: translateY(-50px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .modal-content {
@@ -84,6 +98,7 @@ button:hover{
     flex-direction: column;
     gap: 10px;
     font-family: "Lexend", sans-serif;
+    animation: myAnim 0.5s ease 0s 1 normal forwards;
 }
 
 .modal-content h2{
