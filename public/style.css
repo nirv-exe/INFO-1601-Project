@@ -32,8 +32,8 @@ body{
 }
 
 .logo a{
-    font-size: 2em;
-    font-weight: 500;
+    font-size: 2.5em;
+    font-weight: 700;
     margin-top: 10px;
     padding: 15px 20px;
     color: white;
@@ -45,13 +45,14 @@ li{
 }
 
 button{
+    font-family: "Lexend", sans-serif;
     background-color: white;
     margin-left: 10px;
     border-radius: 10px;
     border: 0px;
     padding: 10px;
     width: auto;
-    color: black;
+    color: #333;
     font-weight:600;
     font-size: 1em;
 }
@@ -82,6 +83,7 @@ button:hover{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    font-family: "Lexend", sans-serif;
 }
 
 .modal-content h2{
@@ -105,6 +107,37 @@ button:hover{
     display: flex;
     justify-content: space-between;
     gap: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.confirm-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+}
+
+.cancel-btn:hover {
+    background-color: #d32f2f;
 }
 
 .acc-buttons button {
@@ -196,13 +229,15 @@ button:hover{
     width: 100vw;
     background: linear-gradient(to top, #6a11cb, #0066ff);
     color: white;
-    padding: 2rem;
+    padding: 1rem;
     overflow: hidden;
+    position: relative;
 }
 
 .home-data {
     max-width: 600px;
     padding: 2rem;
+    margin-top: -30vh;
 }
 
 .home-data h1 {
@@ -271,7 +306,7 @@ button:hover{
 }
 
 .subject-item:hover {
-    transform: translateY(-3px);
+    background-color: #d9d9d9;
 }
 
 /* Add these styles at the end of your CSS */
@@ -287,9 +322,11 @@ button:hover{
     cursor: pointer;
     padding: 5px;
     font-size: 1.2em;
+    border-radius: 5px;
 }
 
 .delete-option {
+    display: none;
     position: absolute;
     right: 0;
     top: 30px;
@@ -299,10 +336,24 @@ button:hover{
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: none;
     z-index: 10;
+    transition: all 0.3s ease;
 }
 
-.delete-option.show {
+.menu-dots:hover + .delete-option,
+.delete-option:hover {
     display: block;
+}
+
+.menu-dots:hover{
+    background-color: #b3b3b3;
+    box-shadow: 0px 0px 12px -1px rgba(0,0,0,0.27);
+    -webkit-box-shadow: 0px 0px 12px -1px rgba(0,0,0,0.27);
+    -moz-box-shadow: 0px 0px 12px -1px rgba(0,0,0,0.27);
+}
+
+.delete-option:hover{
+    background-color: #d9d9d9;
+    font-weight: bold;
 }
 
 .delete-btn {
@@ -311,4 +362,130 @@ button:hover{
     white-space: nowrap;
 }
 
+/*flashcard styles*/
 
+.flashcard-question {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.flashcard-answer {
+    color: #555;
+}
+
+.flashcard-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    padding: 5px;
+    color: #333;
+    border-radius: 5px;
+    border-width: 2em;
+}
+
+.flashcard-menu:hover{
+    background-color: #d9d9d9;
+}
+
+.flashcard-menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.flashcard-menu-dropdown.show{
+    display: block;
+}
+
+.delete-flashcard {
+    color: #ff4444; /* Bright red text */
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 10px; /* Add padding for spacing */
+    border-radius: 5px; /* Rounded corners */
+    background-color: white; /* White background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth hover effect */
+    text-align: center; /* Center-align text */
+    display: block; /* Make the button take up the full width */
+    width: 100%; /* Ensure it fills the container */
+    height: 100%; /* Ensure it fills the container */
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+.flashcard-menu:hover + .flashcard-menu-dropdown,
+.flashcard-menu-dropdown:hover {
+    display: block;
+}
+
+.delete-flashcard:hover {
+    background-color: #d9d9d9;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+}
+
+/* Flashcard Gallery Styles */
+#flashcardsView {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 0;
+}
+
+.flashcards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.flashcards-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.flashcard-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.study-button {
+    background-color: #4caf50;
+    font-family: "Lexend", sans-serif;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.study-button:hover{
+    background-color: #5fb962;
+}
+
+.back-button {
+    font-family: "Lexend", sans-serif;
+    background-color: white;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}

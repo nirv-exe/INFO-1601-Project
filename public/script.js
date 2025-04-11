@@ -3,6 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, query, where, getDocs} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { doc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Firebase config from your firebaseConfig.js
 const firebaseConfig = {
@@ -45,6 +46,7 @@ onAuthStateChanged(auth, (user) => {
       createBtn.style.display = 'inline-block';
       userDashboard.style.display = 'block';
       homepage.style.display = 'none';
+      document.getElementById('flashcardsView').style.display = 'none';
       
       // Show welcome message with email username
       const username = user.email.split('@')[0];
@@ -58,6 +60,7 @@ onAuthStateChanged(auth, (user) => {
       createBtn.style.display = 'none';
       userDashboard.style.display = 'none';
       homepage.style.display = 'flex';
+      document.getElementById('flashcardsView').style.display = 'none';
   }
 });
 
@@ -118,6 +121,30 @@ window.logout = function() {
   });
 }
 
+function showConfirmModal(message, onConfirm) {
+    const modal = document.getElementById('confirmModal');
+    const modalMessage = document.getElementById('confirmModalMessage');
+    const confirmButton = document.getElementById('confirmModalYes');
+    const cancelButton = document.getElementById('confirmModalNo');
+
+    // Set the message
+    modalMessage.textContent = message;
+
+    // Show the modal
+    modal.style.display = 'block';
+
+    // Handle the "Yes" button
+    confirmButton.onclick = () => {
+        modal.style.display = 'none';
+        onConfirm(); // Execute the confirmation action
+    };
+
+    // Handle the "No" button
+    cancelButton.onclick = () => {
+        modal.style.display = 'none';
+    };
+}
+
 window.addFlashcard = async function() {
   const subject = document.getElementById('subjectInput').value.trim();
   const question = document.getElementById('questionInput').value.trim();
@@ -145,6 +172,11 @@ window.addFlashcard = async function() {
       closeModal('flashcardModal');
 
       loadUserSubjects(auth.currentUser.uid);
+      const flashcardsView = document.getElementById('flashcardsView');
+        if (flashcardsView.style.display === 'block') {
+            // If the gallery is open, refresh it
+            viewFlashcards(subject);
+        }
   } catch (error) {
       showErrorPopup("Error saving flashcard.");
       console.error(error);
@@ -172,76 +204,194 @@ async function loadUserSubjects(userId) {
   }
 }}
 
-function displaySubjects(subjects) {
-  const container = document.getElementById('subjectsContainer');
-  container.innerHTML = '';
-  
-  if (subjects.length === 0) {
-      container.innerHTML = '<p>No subjects yet. Create your first flashcard!</p>';
-      return;
+async function deleteSubject(subject) {
+    const q = query(
+        collection(db, "flashcards"),
+        where("uid", "==", auth.currentUser.uid),
+        where("subject", "==", subject)
+    );
+    
+    const snapshot = await getDocs(q);
+    const deletePromises = [];
+    snapshot.forEach(doc => {
+        deletePromises.push(deleteDoc(doc.ref));
+    });
+    
+    await Promise.all(deletePromises);
   }
-  
-  subjects.forEach(subject => {
-      const subjectElement = document.createElement('div');
-      subjectElement.className = 'subject-item';
-      subjectElement.innerHTML = `
-            ${subject}
+
+function showDeleteConfirmation(subject) {
+    showConfirmModal(`Are you sure you want to delete the subject "${subject}" and all its flashcards?`, async () => {
+        try {
+            await deleteSubject(subject);
+            showPopup("Subject deleted successfully");
+            loadUserSubjects(auth.currentUser.uid); // Refresh the list
+        } catch (error) {
+            showErrorPopup("Error deleting subject");
+            console.error(error);
+        }
+    });
+}
+
+function displaySubjects(subjects) {
+    const container = document.getElementById('subjectsContainer');
+    if (!container) {
+        console.error("Subjects container not found!");
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    if (subjects.length === 0) {
+        container.innerHTML = '<p>No subjects yet. Create your first flashcard!</p>';
+        return;
+    }
+    
+    subjects.forEach(subject => {
+        const subjectElement = document.createElement('div');
+        subjectElement.className = 'subject-item';
+        subjectElement.innerHTML = `
+            <span class="subject-name">${subject}</span>
             <div class="menu-dots">⋮</div>
             <div class="delete-option">
                 <span class="delete-btn" data-subject="${subject}">Delete</span>
             </div>
         `;
-      container.appendChild(subjectElement);
-      
-      const dots = subjectElement.querySelector('.menu-dots');
-      const deleteOption = subjectElement.querySelector('.delete-option');
-      
-      dots.addEventListener('click', (e) => {
-          e.stopPropagation();
-          
-          document.querySelectorAll('.delete-option').forEach(opt => {
-              if (opt !== deleteOption) opt.classList.remove('show');
-          });
-          deleteOption.classList.toggle('show');
-      });
-      
-      const deleteBtn = subjectElement.querySelector('.delete-btn');
-      deleteBtn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          if (confirm(`Delete "${subject}" and all its flashcards?`)) {
-              try {
-                  await deleteSubject(subject);
-                  showPopup("Subject deleted");
-                  loadUserSubjects(auth.currentUser.uid);
-              } catch (error) {
-                  showErrorPopup("Delete failed");
-                  console.error(error);
-              }
-          }
-          deleteOption.classList.remove('show');
-      });
-  });
-  
-  // Close menus when clicking elsewhere
-  document.addEventListener('click', () => {
-      document.querySelectorAll('.delete-option').forEach(opt => {
-          opt.classList.remove('show');
-      });
-  });
+        container.appendChild(subjectElement);
+        
+        // Add click handlers safely
+        const subjectName = subjectElement.querySelector('.subject-name');
+        if (subjectName) {
+            subjectName.style.cursor = 'pointer';
+            subjectName.addEventListener('click', () => viewFlashcards(subject));
+        }
+        
+        const menuBtn = subjectElement.querySelector('.menu-dots');
+        const dropdown = subjectElement.querySelector('.delete-option');
+        
+        if (menuBtn && dropdown) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.delete-option').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                dropdown.classList.toggle('show');
+            });
+        }
+        
+        const deleteBtn = subjectElement.querySelector('.delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showDeleteConfirmation(subject);
+                if (dropdown) dropdown.classList.remove('show');
+            });
+        }
+    });
 }
 
-async function deleteSubject(subject) {
-  const q = query(
-      collection(db, "flashcards"),
-      where("uid", "==", auth.currentUser.uid),
-      where("subject", "==", subject)
-  );
-  
-  const snapshot = await getDocs(q);
-  const deletePromises = [];
-  snapshot.forEach(doc => {
-      deletePromises.push(deleteDoc(doc.ref));
-  });
-  
-  await Promise.all(deletePromises);
+async function viewFlashcards(subject) {
+    try {
+        document.getElementById('userDashboard').style.display = 'none';
+        document.getElementById('flashcardsView').style.display = 'block';
+        
+        const q = query(
+            collection(db, "flashcards"),
+            where("uid", "==", auth.currentUser.uid),
+            where("subject", "==", subject)
+        );
+        
+        const snapshot = await getDocs(q);
+        const flashcards = [];
+        
+        snapshot.forEach(function(doc) {
+            var flashcardData = doc.data();
+            flashcards.push({
+                id: doc.id,
+                question: flashcardData.question,
+                answer: flashcardData.answer,
+                subject: flashcardData.subject
+            });
+        });
+        
+        displayFlashcards(subject, flashcards);
+    } catch (error) {
+        console.error("Error loading flashcards:", error);
+        showErrorPopup("Error loading flashcards");
+    }
+}
+
+function displayFlashcards(subject, flashcards) {
+    const container = document.getElementById('flashcardsGallery');
+    const title = document.getElementById('currentSubjectTitle');
+    
+    title.textContent = `Subject: ${subject}`;
+    container.innerHTML = '';
+    
+    if (flashcards.length === 0) {
+        container.innerHTML = '<p>No flashcards found for this subject.</p>';
+    } else {
+        flashcards.forEach(flashcard => {
+            const card = document.createElement('div');
+            card.className = 'flashcard-card';
+            card.innerHTML = `
+                <div class="flashcard-question">Question: ${flashcard.question}?</div>
+                <div class="flashcard-answer">${flashcard.answer}</div>
+                <div class="flashcard-menu">⋮</div>
+                <div class="flashcard-menu-dropdown">
+                    <span class="delete-flashcard" data-id="${flashcard.id}">Delete</span>
+                </div>
+            `;
+            container.appendChild(card);
+            
+            const menu = card.querySelector('.flashcard-menu');
+            const dropdown = card.querySelector('.flashcard-menu-dropdown');
+            
+            if (menu && dropdown) {
+                menu.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Hide all other dropdowns
+                    document.querySelectorAll('.flashcard-menu-dropdown').forEach(d => {
+                        if (d !== dropdown) d.classList.remove('show');
+                    });
+                    dropdown.classList.toggle('show');
+                });
+            }
+            
+            // Add delete handler
+            const deleteBtn = card.querySelector('.delete-flashcard');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    showConfirmModal('Are you sure you want to delete this flashcard?', async () => {
+                        try {
+                            await deleteFlashcard(flashcard.id);
+                            dropdown.classList.remove('show');
+                            showPopup("Flashcard deleted successfully");
+                            viewFlashcards(subject); // Refresh the view
+                        } catch (error) {
+                            showErrorPopup("Error deleting flashcard");
+                            console.error(error);
+                        }
+                    });
+                });
+            }
+        });
+    }
+    
+    // Add back button handler
+    document.getElementById('backToSubjects').addEventListener('click', () => {
+        document.getElementById('flashcardsView').style.display = 'none';
+        document.getElementById('userDashboard').style.display = 'block';
+    });
+}
+
+async function deleteFlashcard(flashcardId) {
+    try {
+        await deleteDoc(doc(db, "flashcards", flashcardId));
+        return true;
+    } catch (error) {
+        console.error("Error deleting flashcard:", error);
+        throw error;
+    }
 }
