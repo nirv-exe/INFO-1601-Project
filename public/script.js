@@ -165,8 +165,12 @@ async function loadUserSubjects(userId) {
   } catch (error) {
       console.error("Error loading subjects:", error);
       showErrorPopup("Couldn't load your subjects");
+
+      if (error.code === 'permission-denied') {
+        showErrorPopup("Session expired. Please log in again.");
+        logout(); // Force logout if permissions are denied
   }
-}
+}}
 
 function displaySubjects(subjects) {
   const container = document.getElementById('subjectsContainer');

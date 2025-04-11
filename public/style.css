@@ -262,10 +262,11 @@ button:hover{
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0px 1px 9px 0px rgba(0,0,0,0.35);
--webkit-box-shadow: 0px 1px 9px 0px rgba(0,0,0,0.35);
--moz-box-shadow: 0px 1px 9px 0px rgba(0,0,0,0.35);
+    -webkit-box-shadow: 0px 1px 9px 0px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 1px 9px 0px rgba(0,0,0,0.35);
     text-align: center;
     font-family: 'Montserrat', sans-serif;
+    color: #333;
     transition: transform 0.2s;
 }
 
