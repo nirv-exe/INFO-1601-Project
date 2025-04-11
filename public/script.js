@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
 
 // Firebase config from your firebaseConfig.js
 const firebaseConfig = {
@@ -21,6 +23,25 @@ window.showModal = function(id) {
 window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
 };
+
+onAuthStateChanged(auth, (user) => {
+  const loginBtn = document.getElementById('loginBtn');
+  const signupBtn = document.getElementById('signupBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  if (user) {
+      // User is logged in
+      loginBtn.style.display = 'none';
+      signupBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+  } else {
+      // User is logged out
+      loginBtn.style.display = 'inline-block';
+      signupBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
+  }
+});
+
 
 function showPopup(message) {
     const popup = document.getElementById('popup');
@@ -52,7 +73,7 @@ window.signup = function() {
         closeModal('signupModal');
       })
       .catch((error) => {
-        showErrorPopup("Signup Error!");
+        showErrorPopup("Signup Error: " + error.message);
       });
 };
 
@@ -69,3 +90,11 @@ window.login = function() {
         showErrorPopup("Invalid Login Information!");
       });
 };
+
+window.logout = function() {
+  signOut(auth).then(() => {
+      showPopup("Logged out successfully.");
+  }).catch((error) => {
+      showPopup("Error: " + error.message);
+  });
+}
