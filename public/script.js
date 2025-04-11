@@ -492,6 +492,7 @@ document.getElementById('studyBtn').addEventListener('click', startStudySession)
 function startStudySession() {
     const subject = document.getElementById('currentSubjectTitle').textContent.replace('Subject: ', '');
     loadStudyDeck(subject);
+    document.getElementById('studySummaryWrapper').remove();
 }
 
 async function loadStudyDeck(subject) {
@@ -578,7 +579,6 @@ function loadStudyCard() {
     const endStudyBtn = document.getElementById('endStudyBtn');
 
     answerInput.addEventListener('click', (event) => event.stopPropagation());
-    checkAnswerBtn.addEventListener('click', (event) => event.stopPropagation());
     prevCardBtn.addEventListener('click', (event) => event.stopPropagation());
     nextCardBtn.addEventListener('click', (event) => event.stopPropagation());
     endStudyBtn.addEventListener('click', (event) => event.stopPropagation());
@@ -592,17 +592,10 @@ function normalizeAnswer(answer) {
         .trim();                   // Trim whitespace
 }
 
-// Check user's answer
-document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
-document.getElementById('userAnswerInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') checkAnswer();
-});
-
 function checkAnswer() {
     const userAnswer = document.getElementById('userAnswerInput').value;
     const correctAnswer = studySessionCards[currentCardIndex].answer;
     const feedback = document.getElementById('answerFeedback');
-    nextBtn.disabled = true;
 
     if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
         feedback.textContent = "✅ Correct!";
@@ -620,11 +613,6 @@ function checkAnswer() {
     document.getElementById('studyStats').textContent = `✅ ${correctAnswers} ❌ ${wrongAnswers}`;
     document.getElementById('studyAnswer').style.display = 'none';
 }
-
-// Show answer button
-document.getElementById('showAnswerBtn').addEventListener('click', () => {
-    document.getElementById('studyFlashcard').classList.add('flipped');
-});
 
 // Navigation buttons
 document.getElementById('prevCardBtn').addEventListener('click', () => {
@@ -688,8 +676,23 @@ function displayStudySummary() {
 
     document.querySelector('.main').appendChild(summaryWrapper);
 
-    // Add event listener to close button
-    document.getElementById('closeSummaryBtn').addEventListener('click', () => {
-        document.getElementById('studySummaryWrapper').remove();
+    closeBtn();
+}
+
+async function closeBtn() {
+    const summaryWrapper = document.getElementById('studySummaryWrapper');
+    const closeSummaryBtn = document.getElementById('closeSummaryBtn');
+
+    if (!summaryWrapper || !closeSummaryBtn) return;
+
+    closeSummaryBtn.addEventListener('click', () => {
+        summaryWrapper.remove();
     });
+
+    // Automatically close the summary screen after 10 seconds
+    setTimeout(() => {
+        if (summaryWrapper) {
+            summaryWrapper.remove();
+        }
+    }, 5000);
 }
