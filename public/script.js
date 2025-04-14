@@ -289,90 +289,110 @@ window.searchSubject = async function () {
     }
 };
 
-
-function displaySubjects(subjects) {
+async function displaySubjects(subjects) {
     const container = document.getElementById('subjectsContainer');
     if (!container) {
         console.error("Subjects container not found!");
         return;
     }
-    
+
     container.innerHTML = '';
-    
+
     if (subjects.length === 0) {
         container.innerHTML = '<p>No subjects yet. Create your first flashcard!</p>';
         return;
     }
-    
-    subjects.forEach(subject => {
-        const subjectElement = document.createElement('div');
-        subjectElement.className = 'subject-item';
-        subjectElement.innerHTML = `
-            <span class="subject-name">${subject}</span>
-            <div class="menu-dots">⋮</div>
-            <div class="subject-menu-dropdown">
-                <span class="edit-subject-btn" data-subject="${subject}">Edit</span>
-                <span class="delete-subject-btn" data-subject="${subject}">Delete</span>
-            </div>
-        `;
-        container.appendChild(subjectElement);
-        
-        // Add click handlers safely
-        const subjectName = subjectElement.querySelector('.subject-name');
-        if (subjectName) {
-            subjectName.style.cursor = 'pointer';
-            subjectName.addEventListener('click', () => viewFlashcards(subject));
-        }
-        
-        const menuBtn = subjectElement.querySelector('.menu-dots');
-        const dropdown = subjectElement.querySelector('.subject-menu-dropdown');
-        
-        if (menuBtn && dropdown) {
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.querySelectorAll('.subject-menu-dropdown').forEach(d => {
-                    if (d !== dropdown) d.classList.remove('show');
-                });
-                dropdown.classList.toggle('show');
-            });
-        }
 
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.subject-menu-dropdown').forEach(d => d.classList.remove('show'));
+    try {
+        const userId = auth.currentUser.uid;
+        const q = query(
+            collection(db, "flashcards"),
+            where("uid", "==", userId),
+            orderBy("createdAt", "asc")
+        );
+
+        const snapshot = await getDocs(q);
+        const orderedSubjects = new Map();
+
+        snapshot.forEach(doc => {
+            const subject = doc.data().subject;
+            if (!orderedSubjects.has(subject)) {
+                orderedSubjects.set(subject, true);
+            }
         });
-        
-        const deleteBtn = subjectElement.querySelector('.delete-subject-btn');
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showDeleteConfirmation(subject);
-                if (dropdown) dropdown.classList.remove('show');
+
+        [...orderedSubjects.keys()].forEach(subject => {
+            const subjectElement = document.createElement('div');
+            subjectElement.className = 'subject-item';
+            subjectElement.innerHTML = `
+                <span class="subject-name">${subject}</span>
+                <div class="menu-dots">⋮</div>
+                <div class="subject-menu-dropdown">
+                    <span class="edit-subject-btn" data-subject="${subject}">Edit</span>
+                    <span class="delete-subject-btn" data-subject="${subject}">Delete</span>
+                </div>
+            `;
+            container.appendChild(subjectElement);
+
+            const subjectName = subjectElement.querySelector('.subject-name');
+            if (subjectName) {
+                subjectName.style.cursor = 'pointer';
+                subjectName.addEventListener('click', () => viewFlashcards(subject));
+            }
+
+            const menuBtn = subjectElement.querySelector('.menu-dots');
+            const dropdown = subjectElement.querySelector('.subject-menu-dropdown');
+            
+            if (menuBtn && dropdown) {
+                menuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.subject-menu-dropdown').forEach(d => {
+                        if (d !== dropdown) d.classList.remove('show');
+                    });
+                    dropdown.classList.toggle('show');
+                });
+            }
+
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.subject-menu-dropdown').forEach(d => d.classList.remove('show'));
             });
-        }
 
-        const editSubjectBtn = subjectElement.querySelector('.edit-subject-btn');
-        if (editSubjectBtn) {
-            editSubjectBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.getElementById('editSubjectInput').value = subject;
-                document.getElementById('editSubjectModal').style.display = 'block';
+            const deleteBtn = subjectElement.querySelector('.delete-subject-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showDeleteConfirmation(subject);
+                    if (dropdown) dropdown.classList.remove('show');
+                });
+            }
 
-                document.getElementById('saveSubjectBtn').onclick = async () => {
-                    const newSubject = document.getElementById('editSubjectInput').value;
+            const editSubjectBtn = subjectElement.querySelector('.edit-subject-btn');
+            if (editSubjectBtn) {
+                editSubjectBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.getElementById('editSubjectInput').value = subject;
+                    document.getElementById('editSubjectModal').style.display = 'block';
 
-                    try {
-                        await updateSubjectName(subject, newSubject);
-                        showPopup("Subject updated successfully");
-                        closeModal('editSubjectModal');
-                        loadUserSubjects(auth.currentUser.uid); // Refresh the list
-                    } catch (error) {
-                        showErrorPopup("Error updating subject");
-                        console.error(error);
-                    }
-                };
-            });
-        }
-    });
+                    document.getElementById('saveSubjectBtn').onclick = async () => {
+                        const newSubject = document.getElementById('editSubjectInput').value;
+
+                        try {
+                            await updateSubjectName(subject, newSubject);
+                            showPopup("Subject updated successfully");
+                            closeModal('editSubjectModal');
+                            loadUserSubjects(auth.currentUser.uid); // Refresh the list
+                        } catch (error) {
+                            showErrorPopup("Error updating subject");
+                            console.error(error);
+                        }
+                    };
+                });
+            }
+        });
+    } catch (error) {
+        console.error("Error loading subjects:", error);
+        showErrorPopup("Couldn't load your subjects");
+    }
 }
 
 let currentSubjectView = null;

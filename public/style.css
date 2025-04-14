@@ -331,7 +331,6 @@ button:hover{
     right: 0;
     top: 30px;
     background: white;
-    padding: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 1000; /* Ensure it appears above other elements */
@@ -374,7 +373,6 @@ button:hover{
     padding: 10px;
     border-radius: 5px;
     background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     text-align: center;
     width: 100%;
