@@ -12,12 +12,25 @@ body{
 }
 
 .main{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     padding-top: 10px; 
     background: linear-gradient(to top, #6a11cb, #0066ff);
     width: 100%;
     min-height: 100vh;
     margin: 0;
     overflow: auto;
+}
+
+.footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 1rem;
+    font-family: "Lexend", sans-serif;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: white;
+    font-size: 0.7em;
 }
 
 .navbar{
