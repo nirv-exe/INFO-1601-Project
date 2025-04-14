@@ -15,14 +15,22 @@
         <nav class="navbar">
             <div class="navdiv">
                 <div id="logolink" class="logo"><a href="#">Cram.io</a></div>
+
+                <div class="searchBar" id="searchSub">
+                    <input type="search" id="searchKey" class="searchIpt" placeholder="Enter Subject" >
+                    <button type="submit" id="searchKey" class="searchBtn" onclick="searchSubject()">Search</button>    
+                </div>
+
                 <ul>
-                    <button id="createBtn" style="display: none;" onclick="showModal('flashcardModal')">Create Flashcard</button>
+                    <button id="createBtn" style="display: none;" onclick="openFlashcardModal()">Create Flashcard</button>
                     <button id="logoutBtn" style="display: none;" onclick="logout()">Logout</button>
                 </ul>
-            </div>
+
+            </div>    
         </nav>
     </header>
 
+    <div class="main">
         <section id="homepage" class="homepage">
             <div class="home-data">
                 <h1>Welcome to Cram.io</h1>
@@ -60,7 +68,7 @@
             </div>
         </div>
 
-        <div class="main">
+        
         <div id="userDashboard" style="display: none;">
             <h2 id="welcomeMessage" class="dashboard-title"></h2>
             <div id="subjectsContainer" class="subjects-grid"></div>

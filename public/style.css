@@ -7,15 +7,17 @@ body{
     margin: 0;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
     color: white;
+    overflow-x: hidden;
 }
 
 .main{
+    padding-top: 10px; 
     background: linear-gradient(to top, #6a11cb, #0066ff);
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     margin: 0;
+    overflow: auto;
 }
 
 .navbar{
@@ -61,6 +63,33 @@ button{
 
 button:hover{
     background-color: #d9d9d9;
+}
+
+.searchBar{
+    display: none;
+    margin-left: 100px;
+}
+
+.searchIpt{
+    font-family: "Lexend", sans-serif;
+    border-radius: 10px;
+    height: 3em;
+    width: 250px;
+    border: 0px;
+    text-align: center;
+    box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    -webkit-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    -moz-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+}
+
+.searchIpt::placeholder{
+    color: #999999;
+}
+
+.searchBtn{
+    box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    -webkit-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    -moz-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);  
 }
 
 .auth-modal {
@@ -188,53 +217,6 @@ button:hover{
     transform: translateY(0);
 }
 
-#flashcardSection {
-    max-width: 500px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 2px solid #ddd;
-    border-radius: 1rem;
-    background-color: #fefefe;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Montserrat', sans-serif;
-}
-
-#flashcardSection h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    color: #333;
-}
-
-#flashcardSection input {
-    width: 100%;
-    padding: 0.75rem;
-    margin: 0.5rem 0;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-family: 'Montserrat', sans-serif;
-    box-sizing: border-box;
-}
-
-#flashcardSection button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 1rem;
-}
-
-#flashcardSection button:hover {
-    background-color: #45a049;
-}
-
 .homepage {
     display: flex;
     font-family: 'Montserrat', sans-serif;
@@ -247,8 +229,8 @@ button:hover{
     background: linear-gradient(to top, #6a11cb, #0066ff);
     color: white;
     padding: 1rem;
-    overflow: hidden;
     position: relative;
+    overflow: auto;
 }
 
 .home-data {
@@ -303,10 +285,22 @@ button:hover{
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 0 auto;
     padding: 0 20px;
     font-family: 'Montserrat', sans-serif;
     color: whitesmoke;
+}
+
+@keyframes cardAnim {
+	0% {
+		opacity: 0;
+		transform: translateY(50px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .subject-item {
@@ -320,16 +314,15 @@ button:hover{
     font-family: 'Montserrat', sans-serif;
     color: #333;
     transition: transform 0.2s;
+    animation: cardAnim 0.7s ease 0s 1 normal forwards;
 }
 
 .subject-item:hover {
     background-color: #d9d9d9;
 }
 
-/* Add these styles at the end of your CSS */
 .subject-item {
     position: relative;
-    /* Keep your existing subject-item styles */
 }
 
 .menu-dots {
@@ -417,6 +410,7 @@ button:hover{
     color: #333;
     border-radius: 5px;
     border-width: 2em;
+    overflow: auto;
 }
 
 .flashcard-menu:hover{
@@ -512,6 +506,7 @@ button:hover{
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: relative;
+    animation: cardAnim 0.7s ease 0s 1 normal forwards;
 }
 
 .study-button {
@@ -551,6 +546,7 @@ button:hover{
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     font-family: 'Montserrat', sans-serif;
     color: #333;
+    max-height: fit-content;
 }
 
 /* Header Section */

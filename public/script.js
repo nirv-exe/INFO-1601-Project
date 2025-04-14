@@ -27,8 +27,6 @@ window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
 };
 
-const flashcardSection = document.getElementById('flashcardSection');
-
 document.getElementById('logolink').addEventListener('click', function(e) {
   e.preventDefault(); // Prevent default anchor behavior
   location.reload(); // Reload the page
@@ -39,6 +37,7 @@ onAuthStateChanged(auth, (user) => {
   const createBtn = document.getElementById('createBtn');
   const userDashboard = document.getElementById('userDashboard');
   const homepage = document.getElementById('homepage');
+  const searchBar = document.getElementById('searchSub');
 
   if (user) {
       // User is logged in
@@ -46,6 +45,7 @@ onAuthStateChanged(auth, (user) => {
       createBtn.style.display = 'inline-block';
       userDashboard.style.display = 'block';
       homepage.style.display = 'none';
+      searchBar.style.display = 'inline-block'; 
       document.getElementById('flashcardsView').style.display = 'none';
       
       // Show welcome message with email username
@@ -60,6 +60,7 @@ onAuthStateChanged(auth, (user) => {
       createBtn.style.display = 'none';
       userDashboard.style.display = 'none';
       homepage.style.display = 'flex';
+      searchBar.style.display = 'none'; 
       document.getElementById('flashcardsView').style.display = 'none';
   }
 });
@@ -256,6 +257,39 @@ async function updateSubjectName(oldSubject, newSubject) {
     await Promise.all(updatePromises);
 }
 
+window.searchSubject = async function () {
+    const keyword = document.getElementById('searchKey').value.toLowerCase().trim();
+    const user = auth.currentUser;
+
+    if (!user || !keyword) return;
+
+    const q = query(collection(db, "flashcards"), where("uid", "==", user.uid));
+    const snapshot = await getDocs(q);
+
+    const results = [];
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.subject.toLowerCase().includes(keyword)) {
+            results.push({
+                id: doc.id,
+                question: data.question,
+                answer: data.answer,
+                subject: data.subject
+            });
+        }
+    });
+
+    if (results.length > 0) {
+        showPopup("Flashcards Found!")
+        displayFlashcards(results[0].subject, results);
+        document.getElementById('userDashboard').style.display = 'none';
+        document.getElementById('flashcardsView').style.display = 'block';
+    } else {
+        showErrorPopup("No matching subjects found.");
+    }
+};
+
+
 function displaySubjects(subjects) {
     const container = document.getElementById('subjectsContainer');
     if (!container) {
@@ -341,7 +375,10 @@ function displaySubjects(subjects) {
     });
 }
 
+let currentSubjectView = null;
+
 async function viewFlashcards(subject) {
+    currentSubjectView = subject;
     try {
         document.getElementById('userDashboard').style.display = 'none';
         document.getElementById('flashcardsView').style.display = 'block';
@@ -373,6 +410,18 @@ async function viewFlashcards(subject) {
         showErrorPopup("Error loading flashcards");
     }
 }
+
+window.openFlashcardModal = function () {
+    if (currentSubjectView) {
+        document.getElementById('subjectInput').value = currentSubjectView;
+        document.getElementById('subjectInput').disabled = true;
+    } else {
+        document.getElementById('subjectInput').value = '';
+        document.getElementById('subjectInput').disabled = false;
+    }
+
+    showModal('flashcardModal');
+};
 
 function displayFlashcards(subject, flashcards) {
     const container = document.getElementById('flashcardsGallery');
@@ -466,6 +515,8 @@ function displayFlashcards(subject, flashcards) {
     document.getElementById('backToSubjects').addEventListener('click', () => {
         document.getElementById('flashcardsView').style.display = 'none';
         document.getElementById('userDashboard').style.display = 'block';
+        document.getElementById('searchKey').value = '';
+        currentSubjectView = null;
     });
 }
 
@@ -539,7 +590,6 @@ async function loadStudyDeck(subject) {
 
 const flashcard = document.getElementById('studyFlashcard');
 const studyAnswer = document.getElementById('studyAnswer');
-const nextBtn = document.getElementById('nextCardBtn')
 
 flashcard.addEventListener('click', () => {
     flashcard.classList.toggle('flipped');
@@ -550,7 +600,7 @@ flashcard.addEventListener('click', () => {
     } else {
         studyAnswer.style.display = 'none';
     }
-});
+});   
 
 function loadStudyCard() {
     if (studySessionCards.length === 0) return;
@@ -602,9 +652,20 @@ const nextButton = document.getElementById('nextCardBtn');
 nextButton.disabled = false;
 
 function checkAnswer() {
+    const checkAnswerBtn = document.getElementById('checkAnswerBtn');
     const userAnswer = document.getElementById('userAnswerInput').value;
     const correctAnswer = studySessionCards[currentCardIndex].answer;
     const feedback = document.getElementById('answerFeedback');
+
+    checkAnswerBtn.disabled = true;
+    flashcard.classList.toggle('flipped');
+        
+    // Toggle answer visibility
+    if (flashcard.classList.contains('flipped')) {
+        studyAnswer.style.display = 'flex';
+    } else {
+        studyAnswer.style.display = 'none';
+    }
 
     if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
         feedback.textContent = "✅ Correct!";
@@ -612,11 +673,12 @@ function checkAnswer() {
         if (currentCardIndex <= studySessionCards.length - 1)
         {    
             correctAnswers++;
-            nextButton.disabled = true
+            nextButton.disabled = true;
             setTimeout(() => {
                 if (currentCardIndex < studySessionCards.length - 1) {
                     currentCardIndex++;
                     nextButton.disabled = false;
+                    checkAnswerBtn.disabled = false;
                     loadStudyCard();
                 } else {
                     showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
@@ -628,9 +690,12 @@ function checkAnswer() {
         feedback.textContent = `❌ Incorrect! The answer was: ${correctAnswer}`;
         feedback.className = "feedback-message feedback-incorrect";
         wrongAnswers++;
+        nextButton.disabled = true;
         setTimeout(() => {
             if (currentCardIndex < studySessionCards.length - 1) {
                 currentCardIndex++;
+                nextButton.disabled = false;
+                checkAnswerBtn.disabled = false;
                 loadStudyCard();
             } else {
                 showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
@@ -640,7 +705,7 @@ function checkAnswer() {
     }
 
     document.getElementById('studyStats').textContent = `✅ ${correctAnswers} ❌ ${wrongAnswers}`;
-    document.getElementById('studyAnswer').style.display = 'none';
+    //document.getElementById('studyAnswer').style.display = 'none';
 }
 
 // Navigation buttons
