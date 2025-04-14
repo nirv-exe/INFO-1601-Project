@@ -310,9 +310,9 @@ function displaySubjects(subjects) {
         subjectElement.innerHTML = `
             <span class="subject-name">${subject}</span>
             <div class="menu-dots">⋮</div>
-            <div class="delete-option">
+            <div class="subject-menu-dropdown">
                 <span class="edit-subject-btn" data-subject="${subject}">Edit</span>
-                <span class="delete-btn" data-subject="${subject}">Delete</span>
+                <span class="delete-subject-btn" data-subject="${subject}">Delete</span>
             </div>
         `;
         container.appendChild(subjectElement);
@@ -325,12 +325,12 @@ function displaySubjects(subjects) {
         }
         
         const menuBtn = subjectElement.querySelector('.menu-dots');
-        const dropdown = subjectElement.querySelector('.delete-option');
+        const dropdown = subjectElement.querySelector('.subject-menu-dropdown');
         
         if (menuBtn && dropdown) {
             menuBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                document.querySelectorAll('.delete-option').forEach(d => {
+                document.querySelectorAll('.subject-menu-dropdown').forEach(d => {
                     if (d !== dropdown) d.classList.remove('show');
                 });
                 dropdown.classList.toggle('show');
@@ -338,10 +338,10 @@ function displaySubjects(subjects) {
         }
 
         document.addEventListener('click', () => {
-            document.querySelectorAll('.delete-option').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.subject-menu-dropdown').forEach(d => d.classList.remove('show'));
         });
         
-        const deleteBtn = subjectElement.querySelector('.delete-btn');
+        const deleteBtn = subjectElement.querySelector('.delete-subject-btn');
         if (deleteBtn) {
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
