@@ -605,6 +605,7 @@ button:hover{
     font-family: 'Montserrat', sans-serif;
     color: #333;
     max-height: fit-content;
+    animation: cardAnim 0.5s ease 0s 1 normal forwards;
 }
 
 /* Header Section */
@@ -796,6 +797,7 @@ button:hover{
     max-width: 600px;
     color: #333;
     font-family: "Lexend", sans-serif;
+    animation: cardAnim 0.7s ease 0s 1 normal forwards;
 }
 
 #studySummaryWrapper h2 {

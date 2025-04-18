@@ -28,7 +28,7 @@ window.showModal = function(id) {
 
 window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
-
+n 
     if (toggleLoginButton.textContent === "Hide" || toggleSignupButton.textContent === "Hide")
     {    
         togglePasswordVisibility();
@@ -573,6 +573,7 @@ function displayFlashcards(subject, flashcards) {
         document.getElementById('flashcardsView').style.display = 'none';
         document.getElementById('userDashboard').style.display = 'block';
         document.getElementById('searchKey').value = '';
+        document.getElementById('studySummaryWrapper').remove();
         currentSubjectView = null;
     });
 }
@@ -801,7 +802,9 @@ function endStudySession() {
     document.getElementById('studyMode').style.display = 'none';
     document.getElementById('flashcardsView').style.display = 'block';
 
-    displayStudySummary();
+    setTimeout( () => {
+        displayStudySummary();
+    }, 150);
 
     const score = (correctAnswers / studySessionCards.length) * 100;
 
@@ -814,6 +817,7 @@ function endStudySession() {
 
 function displayStudySummary() {
     const summaryContainer = document.createElement('div');
+    
     summaryContainer.innerHTML = `
         <div>
             <h2>Study Session Summary</h2>
@@ -827,9 +831,7 @@ function displayStudySummary() {
     const summaryWrapper = document.createElement('div');
     summaryWrapper.id = 'studySummaryWrapper';
     summaryWrapper.appendChild(summaryContainer);
-
     document.querySelector('.main').appendChild(summaryWrapper);
-
     closeBtn();
 }
 
