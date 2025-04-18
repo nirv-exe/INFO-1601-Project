@@ -714,8 +714,10 @@ function checkAnswer() {
     const correctAnswer = studySessionCards[currentCardIndex].answer;
     const feedback = document.getElementById('answerFeedback');
 
-    checkAnswerBtn.disabled = true;
-    flashcard.classList.toggle('flipped');
+    if(userAnswer !== ""){  
+        checkAnswerBtn.disabled = true;
+        flashcard.classList.toggle('flipped');
+    }
         
     // Toggle answer visibility
     if (flashcard.classList.contains('flipped')) {
@@ -724,7 +726,13 @@ function checkAnswer() {
         studyAnswer.style.display = 'none';
     }
 
-    if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
+    if (userAnswer === "")
+    {
+        feedback.textContent = "⚠️ Cannot submit a blank answer!";
+        feedback.className = "feedback-message feedback-incorrect";
+        
+    }
+    else if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
         feedback.textContent = "✅ Correct!";
         feedback.className = "feedback-message feedback-correct";
         if (currentCardIndex <= studySessionCards.length - 1)
