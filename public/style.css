@@ -499,6 +499,8 @@ button:hover{
     background-color: white;
     display: block;
     text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
 .edit-flashcard:hover {
