@@ -65,7 +65,6 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-
 function showPopup(message) {
     const popup = document.getElementById('popup');
     popup.textContent = message;

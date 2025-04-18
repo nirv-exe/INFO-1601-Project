@@ -33,6 +33,18 @@ body{
     justify-content: space-between;
 }
 
+@keyframes logoAnim {
+	0% {
+		opacity: 0;
+		transform: translateX(-50px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
 .logo a{
     font-size: 2.5em;
     font-weight: 700;
@@ -40,11 +52,38 @@ body{
     padding: 15px 20px;
     color: white;
     text-shadow: 0px 0px 3px rgba(181,0,248,0.57);
+}   
+
+.logo{
+    animation: logoAnim 0.7s ease 0s 1 normal forwards;
 }
 
-li{
-    list-style: none;
-    display: inline-block;
+@keyframes authBtnsAnim {
+	0% {
+		opacity: 0;
+		transform: translateX(50px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes searchBarAnim {
+	0% {
+		opacity: 0;
+		transform: translateY(-50px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.auth-links{
+    animation: authBtnsAnim 0.7s ease 0.5s 1 normal forwards;
 }
 
 button{
@@ -68,6 +107,7 @@ button:hover{
 .searchBar{
     display: none;
     margin-left: 100px;
+    animation: searchBarAnim 0.5s ease 0s 1 normal forwards;
 }
 
 .searchIpt{
@@ -194,7 +234,7 @@ button:hover{
     position: fixed;
     bottom: 30px;
     left: 30px;
-    background-color: #4BB543; /* green success color */
+    background-color: #4BB543;
     color: white;
     padding: 15px 25px;
     border-radius: 8px;
@@ -242,18 +282,23 @@ button:hover{
 .home-data h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    animation: cardAnim 0.7s ease 0s 1 normal forwards;
 }
 
 .home-data p {
     font-size: 1.2rem;
     margin-bottom: 2rem;
+    animation: cardAnim 0.7s ease 0s 1 normal forwards;
+    animation-delay: 0.1s;
 }
 
 .home-buttons {
     display: flex;
     justify-content: center;
-    gap: 1rem; /* space between buttons */
-    flex-wrap: wrap; /* optional: wrap to new line on small screens */
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: cardAnim 0.7s ease 0s 1 normal forwards;
+    animation-delay: 0.15s;
 }
 
 .home-buttons button {
@@ -289,8 +334,8 @@ button:hover{
     padding: 0 20px;
     font-family: 'Montserrat', sans-serif;
     color: whitesmoke;
-    overflow: visible; /* Allow dropdowns to overflow */
-    position: relative; /* Ensure proper stacking context */
+    overflow: visible;
+    position: relative;
 }
 
 @keyframes cardAnim {
@@ -326,21 +371,21 @@ button:hover{
 }
 
 .subject-menu-dropdown {
-    display: none; /* Hidden by default */
+    display: none; 
     position: absolute;
     right: 0;
     top: 30px;
     background: white;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Ensure it appears above other elements */
-    flex-direction: column; /* Stack buttons vertically */
-    gap: 5px; /* Add spacing between buttons */
-    min-width: 100px; /* Ensure enough width for buttons */
+    z-index: 1000;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 100px;
 }
 
 .subject-menu-dropdown.show {
-    display: block; /* Show the dropdown when the 'show' class is added */
+    display: block;
 }
 
 .menu-dots {
@@ -387,14 +432,14 @@ button:hover{
 
 .edit-subject-btn {
     display: inline-block;
-    color: #0066ff; /* Blue color for the Edit button */
+    color: #0066ff;
     cursor: pointer;
     white-space: nowrap;
     padding: 10px;
     border-radius: 5px;
     background-color: white;
     text-align: center;
-    transition: all 0.3s ease; /* Smooth hover effect */
+    transition: all 0.3s ease;
 }
 
 /*flashcard styles*/
@@ -442,7 +487,7 @@ button:hover{
 }
 
 .edit-flashcard {
-    color: #0066ff; /* Blue color for the Edit button */
+    color: #0066ff;
     cursor: pointer;
     white-space: nowrap;
     padding: 10px;
@@ -458,19 +503,19 @@ button:hover{
 }
 
 .delete-flashcard {
-    color: #ff4444; /* Bright red text */
+    color: #ff4444;
     cursor: pointer;
     white-space: nowrap;
-    padding: 10px; /* Add padding for spacing */
-    border-radius: 5px; /* Rounded corners */
-    background-color: white; /* White background */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    transition: all 0.3s ease; /* Smooth hover effect */
-    text-align: center; /* Center-align text */
-    display: block; /* Make the button take up the full width */
-    width: 100%; /* Ensure it fills the container */
-    height: 100%; /* Ensure it fills the container */
-    box-sizing: border-box; /* Include padding in width/height */
+    padding: 10px; 
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    text-align: center;
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .flashcard-menu:hover + .flashcard-menu-dropdown,
@@ -619,16 +664,16 @@ button:hover{
     background: #0066ff;
     color: white;
     transform: rotateY(180deg);
-    display: flex; /* Flexbox for centering */
-    align-items: center; /* Vertically center the content */
-    justify-content: center; /* Horizontally center the content */
-    text-align: center; /* Center-align the text */
-    padding: 2rem; /* Add padding for spacing */
-    border-radius: 10px; /* Keep the rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    height: 100%; /* Ensure it fills the card */
-    width: 100%; /* Ensure it fills the card */
-    position: absolute; /* Ensure proper positioning */
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    text-align: center;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    width: 100%; 
+    position: absolute;
 }
 
 .flashcard.flipped {
