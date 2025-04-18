@@ -28,7 +28,6 @@ window.showModal = function(id) {
 
 window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
-n 
     if (toggleLoginButton.textContent === "Hide" || toggleSignupButton.textContent === "Hide")
     {    
         togglePasswordVisibility();
@@ -58,6 +57,7 @@ onAuthStateChanged(auth, (user) => {
       homepage.style.display = 'none';
       searchBar.style.display = 'inline-block'; 
       document.getElementById('flashcardsView').style.display = 'none';
+      console.log(user);
       
       // Show welcome message with email username
       const username = user.email.split('@')[0];
@@ -147,6 +147,7 @@ window.login = function() {
         closeModal('loginModal');
       })
       .catch((error) => {
+        console.log(error);
         showErrorPopup("Invalid Login Information!");
       });
 };
