@@ -25,6 +25,7 @@ body{
     font-family: "Lexend", sans-serif;
     padding: 25px 25px;
     height: auto;
+    max-width: 100vw;
 }
 
 .navdiv{
