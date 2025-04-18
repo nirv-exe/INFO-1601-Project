@@ -15,6 +15,7 @@ body{
     padding-top: 10px; 
     background: linear-gradient(to top, #6a11cb, #0066ff);
     width: 100%;
+    max-width: 100%;
     min-height: 100vh;
     margin: 0;
     overflow: auto;
