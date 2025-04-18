@@ -47,7 +47,12 @@
             <div class="modal-content">
                 <h2>Sign Up</h2>
                 <input type="email" id="signupEmail" placeholder="Email">
-                <input type="password" id="signupPassword" placeholder="Password">
+
+                <div class="password-input">
+                    <input type="password" id="signupPassword" placeholder="Password">
+                    <button id="showSignupPasswordBtn" onclick="togglePasswordVisibility()">Show</button>
+                </div>
+
                 <div class="acc-buttons">
                     <button onclick="signup()">Create Account</button>
                     <button onclick="closeModal('signupModal')">Cancel</button>
@@ -60,7 +65,12 @@
             <div class="modal-content">
                 <h2>Login</h2>
                 <input type="email" id="loginEmail" placeholder="Email">
-                <input type="password" id="loginPassword" placeholder="Password">
+
+                <div class="password-input">
+                    <input type="password" id="loginPassword" placeholder="Password">
+                    <button id="showLoginPasswordBtn" onclick="togglePasswordVisibility()">Show</button>
+                </div>
+                
                 <div class="acc-buttons">
                     <button onclick="login()">Login</button>
                     <button onclick="closeModal('loginModal')">Cancel</button>

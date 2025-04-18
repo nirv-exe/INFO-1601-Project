@@ -19,12 +19,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const toggleSignupButton = document.getElementById('showSignupPasswordBtn');
+const toggleLoginButton = document.getElementById('showLoginPasswordBtn');
+
 window.showModal = function(id) {
     document.getElementById(id).style.display = 'block';
 };
 
 window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
+
+    if (toggleLoginButton.textContent === "Hide" || toggleSignupButton.textContent === "Hide")
+    {    
+        togglePasswordVisibility();
+    }
+
+    document.getElementById('loginPassword').value = "";
+    document.getElementById('signupPassword').value = "";
 };
 
 document.getElementById('logolink').addEventListener('click', function(e) {
@@ -84,6 +95,33 @@ function showErrorPopup(message) {
         popup.classList.remove('show');
     }, 3000); // Hide after 3 seconds
 }
+
+window.togglePasswordVisibility = function() {
+    const signupPassword = document.getElementById('signupPassword');
+    const loginPassword = document.getElementById('loginPassword');
+    const toggleSignupButton = document.getElementById('showSignupPasswordBtn');
+    const toggleLoginButton = document.getElementById('showLoginPasswordBtn');
+
+    if ((signupPassword  || loginPassword) && (toggleSignupButton || toggleLoginButton)) {
+        if (signupPassword.type === "password") {
+            signupPassword.type = "text";
+            toggleSignupButton.textContent = "Hide";
+        } else {
+            signupPassword.type = "password";
+            toggleSignupButton.textContent = "Show";
+        }
+
+        if (loginPassword.type === "password") {
+            loginPassword.type = "text";
+            toggleLoginButton.textContent = "Hide";
+        } else {
+            loginPassword.type = "password";
+            toggleLoginButton.textContent = "Show";
+        }
+    } else {
+        console.error("Password input or toggle button not found.");
+    }
+};
 
 window.signup = function() {
     const email = document.getElementById('signupEmail').value;

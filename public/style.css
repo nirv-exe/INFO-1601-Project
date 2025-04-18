@@ -33,6 +33,10 @@ body{
     justify-content: space-between;
 }
 
+.password-input button{
+    margin-left: 0px;
+}
+
 @keyframes logoAnim {
 	0% {
 		opacity: 0;
