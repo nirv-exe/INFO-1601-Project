@@ -570,11 +570,11 @@ function displayFlashcards(subject, flashcards) {
     
     // Add back button handler
     document.getElementById('backToSubjects').addEventListener('click', () => {
+        currentSubjectView = null;
         document.getElementById('flashcardsView').style.display = 'none';
         document.getElementById('userDashboard').style.display = 'block';
         document.getElementById('searchKey').value = '';
         document.getElementById('studySummaryWrapper').remove();
-        currentSubjectView = null;
     });
 }
 
