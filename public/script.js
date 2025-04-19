@@ -5,7 +5,7 @@ import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, updat
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { doc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-// Firebase config from your firebaseConfig.js
+// Firebase config from firebaseConfig.js
 const firebaseConfig = {
   apiKey: "AIzaSyBQnclcqQXfnqZekRmc5kmY6ZgUlfj3zQI",
   authDomain: "cramio.firebaseapp.com",
@@ -263,7 +263,7 @@ async function deleteSubject(subject) {
     });
     
     await Promise.all(deletePromises);
-  }
+}
 
 function showDeleteConfirmation(subject) {
     showConfirmModal(`Are you sure you want to delete the subject "${subject}" and all its flashcards?`, async () => {
@@ -846,7 +846,6 @@ async function closeBtn() {
         summaryWrapper.remove();
     });
 
-    // Automatically close the summary screen after 10 seconds
     setTimeout(() => {
         if (summaryWrapper) {
             summaryWrapper.remove();
