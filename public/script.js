@@ -595,6 +595,8 @@ let currentCardIndex = 0;
 let correctAnswers = 0;
 let wrongAnswers = 0;
 let studySessionCards = [];
+let answeredTracker = [];
+let userAnswers = [];
 
 // Initialize Study Mode
 document.getElementById('studyBtn').addEventListener('click', startStudySession);
@@ -602,6 +604,10 @@ document.getElementById('studyBtn').addEventListener('click', startStudySession)
 function startStudySession() {
     const subject = document.getElementById('currentSubjectTitle').textContent.replace('Subject: ', '');
     loadStudyDeck(subject);
+
+    document.getElementById('checkAnswerBtn').disabled = false;
+    document.getElementById('nextCardBtn').disabled = false;
+
     document.getElementById('studySummaryWrapper').remove();
 }
 
@@ -631,6 +637,8 @@ async function loadStudyDeck(subject) {
 
         // Shuffle the deck for study
         studySessionCards = currentStudyDeck.slice().sort(() => Math.random() - 0.5);
+        answeredTracker = new Array(studySessionCards.length).fill(false);
+        userAnswers = new Array(studySessionCards.length).fill("");
         currentCardIndex = 0;
         correctAnswers = 0;
         wrongAnswers = 0;
@@ -667,15 +675,24 @@ function loadStudyCard() {
     const card = studySessionCards[currentCardIndex];
     document.getElementById('studyQuestion').textContent = card.question;
     document.getElementById('studyAnswer').textContent = card.answer;
-    document.getElementById('userAnswerInput').value = '';
+    document.getElementById('userAnswerInput').value = userAnswers[currentCardIndex] || '';
     document.getElementById('answerFeedback').textContent = '';
     document.getElementById('answerFeedback').className = '';
     document.getElementById('cardPosition').textContent = `${currentCardIndex + 1}/${studySessionCards.length}`;
     document.getElementById('studyStats').textContent = `✅ ${correctAnswers} ❌ ${wrongAnswers}`;
     document.getElementById('studyFlashcard').classList.remove('flipped');
+    document.getElementById('userAnswerInput').classList.remove('input-correct', 'input-incorrect');
 
     // Focus input
     document.getElementById('userAnswerInput').focus();
+    if (answeredTracker[currentCardIndex]) {
+        document.getElementById('userAnswerInput').disabled = true;
+        document.getElementById('checkAnswerBtn').disabled = true;
+        showErrorPopup("⚠️ Question already answered.");
+    } else {
+        document.getElementById('userAnswerInput').disabled = false;
+        document.getElementById('checkAnswerBtn').disabled = false;
+    }
 
     studyAnswer.style.display = 'none';
 
@@ -702,10 +719,12 @@ function normalizeAnswer(answer) {
 }
 
 // Check user's answer
-document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
 document.getElementById('userAnswerInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') checkAnswer();
+    if (e.key === 'Enter' && !document.getElementById('checkAnswerBtn').disabled) {
+        checkAnswer();
+    }
 });
+document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
 
 const nextButton = document.getElementById('nextCardBtn');
 nextButton.disabled = false;
@@ -715,10 +734,14 @@ function checkAnswer() {
     const userAnswer = document.getElementById('userAnswerInput').value;
     const correctAnswer = studySessionCards[currentCardIndex].answer;
     const feedback = document.getElementById('answerFeedback');
+    const answerInput = document.getElementById('userAnswerInput');
+
 
     if(userAnswer !== ""){  
         checkAnswerBtn.disabled = true;
         flashcard.classList.toggle('flipped');
+        userAnswers[currentCardIndex] = userAnswer;
+        answeredTracker[currentCardIndex] = true;
     }
         
     // Toggle answer visibility
@@ -732,9 +755,13 @@ function checkAnswer() {
     {
         feedback.textContent = "⚠️ Cannot submit a blank answer!";
         feedback.className = "feedback-message feedback-incorrect";
-        
-    }
-    else if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
+        answerInput.classList.remove('input-correct', 'input-incorrect');
+        return;
+    } 
+    
+    if (normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)) {
+        answerInput.classList.remove('input-incorrect');
+        answerInput.classList.add('input-correct');
         feedback.textContent = "✅ Correct!";
         feedback.className = "feedback-message feedback-correct";
         if (currentCardIndex <= studySessionCards.length - 1)
@@ -756,6 +783,8 @@ function checkAnswer() {
     } else {
         feedback.textContent = `❌ Incorrect! The answer was: ${correctAnswer}`;
         feedback.className = "feedback-message feedback-incorrect";
+        answerInput.classList.remove('input-correct');
+        answerInput.classList.add('input-incorrect');
         wrongAnswers++;
         nextButton.disabled = true;
         setTimeout(() => {
@@ -775,7 +804,6 @@ function checkAnswer() {
     //document.getElementById('studyAnswer').style.display = 'none';
 }
 
-// Navigation buttons
 document.getElementById('prevCardBtn').addEventListener('click', () => {
     if (currentCardIndex > 0) {
         currentCardIndex--;
@@ -784,11 +812,16 @@ document.getElementById('prevCardBtn').addEventListener('click', () => {
 });
 
 
-document.getElementById('nextCardBtn').addEventListener('click', () => { 
+document.getElementById('nextCardBtn').addEventListener('click', () => {
     if (currentCardIndex < studySessionCards.length - 1) {
         currentCardIndex++;
         loadStudyCard();
     } else {
+        if (answeredTracker.includes(false)) {
+            showErrorPopup("⚠️ You must answer all questions.");
+            return;
+        }
+
         showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
         endStudySession();
     }
