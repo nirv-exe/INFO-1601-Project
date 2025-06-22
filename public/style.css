@@ -9,6 +9,7 @@ body{
     height: 100vh;
     color: white;
     overflow-x: hidden;
+    background: linear-gradient(to top, #6a11cb, #0066ff);
 }
 
 .main{
@@ -32,8 +33,9 @@ body{
 .navdiv{
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap; 
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 .password-input button{
@@ -91,6 +93,16 @@ body{
 
 .auth-links{
     animation: authBtnsAnim 0.7s ease 0.5s 1 normal forwards;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    gap: 10px;
+    margin: 5px;
+}
+
+#createBtn, #logoutBtn{
+    margin: 0;
 }
 
 button{
@@ -113,7 +125,7 @@ button:hover{
 
 .searchBar{
     display: none;
-    margin-left: 100px;
+    /* margin-left: 100px; */
     animation: searchBarAnim 0.5s ease 0s 1 normal forwards;
 }
 
@@ -121,7 +133,8 @@ button:hover{
     font-family: "Lexend", sans-serif;
     border-radius: 10px;
     height: 3em;
-    width: 250px;
+    min-width: 200px;
+    width: auto;
     border: 0px;
     text-align: center;
     box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);

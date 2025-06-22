@@ -48,6 +48,7 @@ onAuthStateChanged(auth, (user) => {
   const userDashboard = document.getElementById('userDashboard');
   const homepage = document.getElementById('homepage');
   const searchBar = document.getElementById('searchSub');
+  const navBar = document.getElementById('nav-buttons');
 
   if (user) {
       // User is logged in
@@ -56,6 +57,7 @@ onAuthStateChanged(auth, (user) => {
       userDashboard.style.display = 'block';
       homepage.style.display = 'none';
       searchBar.style.display = 'inline-block'; 
+      navBar.style.display = 'flex';
       document.getElementById('flashcardsView').style.display = 'none';
       console.log(user);
       
