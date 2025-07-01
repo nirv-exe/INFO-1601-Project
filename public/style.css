@@ -912,7 +912,7 @@ button:hover{
 }
 
 .small-navBtns{
-    display: flex;
+    display: none;
     justify-content: space-evenly;
     width: 100%;
     margin-bottom: 10px;
@@ -941,6 +941,13 @@ button:hover{
 
     #small-createBtn, #small-logoutBtn{
         display: flex !important;
+    }
+}
+
+@media (max-width: 640px){
+    .study-container{
+        width: 575px;
+        height: 650px;
     }
 }
 
@@ -975,6 +982,54 @@ button:hover{
         height: 33px;
         width: 35px;
         padding: 5px;
+    }
+}
+
+@media (max-width: 600px){
+    .study-container{
+        width: 500px;
+        height: 650px;
+    }
+
+    .large.nav-button{
+        padding: 12px;
+    }
+}
+
+@media (max-width: 535px){
+    .study-container{
+        width: 450px;
+        height: 650px;
+    }
+
+    .large.nav-button{
+        display: none;
+    }
+
+    .small-navBtns{
+        display: flex;
+        max-height: 44px;
+    }
+
+    .answer-buttons{
+        justify-content: center;
+    }
+    
+    .check-button{
+        width: 75%;
+    }
+
+    .small.end-button svg{
+        width: 35px;
+        height: 35px;
+    }
+
+    .study-header{
+        flex-direction: column;
+    }
+
+    .study-progress{
+        text-align: center;
     }
 }
 
@@ -1028,6 +1083,29 @@ button:hover{
     .auth-links{
         gap: 2em;
     }
+
+    .study-container{
+        width: 425px;
+        height: 650px;
+    }
+}
+
+@media (max-width: 460px){
+    .study-container{
+        width: 400px;
+        height: 650px;
+    }
+}
+
+@media (max-width: 435px){
+    .study-container{
+        width: 350px;
+        height: 650px;
+    }
+
+    .check-button{
+        width: 100%;
+    }
 }
 
 @media (max-width: 380px){
@@ -1062,6 +1140,10 @@ button:hover{
         display: none;
     }
 
+    .small-navBtns{
+        display: flex;
+    }
+
     .study-header{
         flex-direction: column;
     }
@@ -1081,6 +1163,11 @@ button:hover{
     .flashcard{
         height: 225px;
     }
+
+    .navbar::after{
+        left: 1em;
+        width: 90vw;
+    }
 }
 
 @media (max-width: 355px){
@@ -1098,6 +1185,24 @@ button:hover{
         padding: 15px;
     }
 
+    .study-container{
+        width: 300px;
+        height: 650px;
+        position: relative;
+    }
+
+    .navigation-buttons{
+        align-items: center;
+        left: 1px;
+    }
+
+    .check-button{
+        margin-left: 0;
+    }
+
+    .small-navBtns button{
+        margin: 0;
+    }
 
     .main{
         padding: 0;
