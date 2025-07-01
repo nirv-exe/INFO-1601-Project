@@ -28,12 +28,25 @@ body{
     padding: 25px 25px;
     height: auto;
     max-width: 100vw;
+    position: relative;
+}
+
+.navbar::after{
+    content: '';
+    position: absolute;
+    margin-top: 5px;
+    max-width: 90vw;
+    width: 0;
+    height: 3px;
+    background-color: white;
+    border-radius: 25px;
+    transition: 0.2s ease;
 }
 
 .navdiv{
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
     gap: 5px;
 }
@@ -103,6 +116,7 @@ body{
 
 #createBtn, #logoutBtn{
     margin: 0;
+    display: none;
 }
 
 button{
@@ -127,19 +141,29 @@ button:hover{
     display: none;
     /* margin-left: 100px; */
     animation: searchBarAnim 0.5s ease 0s 1 normal forwards;
+    justify-content: center;
+    align-items: center;
+    /* gap: 10px; */
+    background-color: white;
+    border-radius: 10px;
+    width: 255px;
+    height: 40px;
+    position: relative;
 }
 
 .searchIpt{
     font-family: "Lexend", sans-serif;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     height: 3em;
     min-width: 200px;
     width: auto;
     border: 0px;
     text-align: center;
-    box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    position: absolute;
+    left: 10px;
+    /* box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
     -webkit-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
-    -moz-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    -moz-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34); */
 }
 
 .searchIpt::placeholder{
@@ -147,9 +171,22 @@ button:hover{
 }
 
 .searchBtn{
-    box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
+    /* box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
     -webkit-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);
-    -moz-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34);  
+    -moz-box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.34); */
+    background-color: #d9d9d9;
+    margin: 0;
+    max-width: 40px;
+    max-height: 40px;
+    position: absolute;
+    right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchBtn:hover{
+    background-color: #bfbfbf;
 }
 
 .auth-modal {
@@ -843,4 +880,226 @@ button:hover{
 
 .closeBtn:hover{
     background-color: #db5757;
+}
+
+#search-icon{
+    height: 40px;
+    width: 40px;
+}
+
+.searchBtn svg{
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+#small-createBtn, #small-logoutBtn{
+    display: none;
+    max-width: 40px;
+    max-height: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+#small-createBtn svg{
+    width: 20px;
+    height: 20px;
+}
+
+#small-logoutBtn svg{
+    width: 20px;
+    height: 20px;
+}
+
+.small-navBtns{
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.small.nav-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.small.nav-button svg{
+    width: 20px;
+    height: 20px;
+}
+
+#endStudyBtn svg{
+    width: 25px;
+    height: 25px;
+}
+
+@media (max-width: 770px){
+    #createBtn, #logoutBtn{
+        display: none !important;
+    }
+
+    #small-createBtn, #small-logoutBtn{
+        display: flex !important;
+    }
+}
+
+@media (max-width: 625px){
+    .logo a{
+        font-size: 2em;
+    }
+
+    .searchBar{
+        height: 35px;
+        width: 170px;
+    }
+
+    .searchIpt{
+        min-width: 150px;
+        width: 150px;
+        height: 33px;
+    } 
+    
+    .searchBtn{
+        height: 33px;
+        width: 35px;
+        padding: 5px;
+    }
+
+    .searchBtn svg{
+        width: 15px;
+        height: 15px;
+    }
+
+    #small-createBtn, #small-logoutBtn{
+        height: 33px;
+        width: 35px;
+        padding: 5px;
+    }
+}
+
+@media (max-width: 500px){
+    .logo a{
+        font-size: 2.5em;
+    }
+
+    .navdiv{
+        flex-direction: column;
+        gap: 1em;
+    }
+
+    .subjects-grid{
+        grid-template-columns: repeat(1, minmax(200px, 1fr));
+    }
+
+    .searchBar{
+        height: 40px;
+        width: 250px;
+    }
+
+    .searchIpt{
+        min-width: 150px;
+        width: 200px;
+        height: 40px;
+    } 
+    
+    .searchBtn{
+        height: 40px;
+        width: 40px;
+        padding: 5px;
+    }
+
+    .searchBtn svg{
+        width: 20px;
+        height: 20px;
+    }
+
+    #small-createBtn, #small-logoutBtn{
+        height: 40px;
+        width: 40px;
+        padding: 5px;
+    }
+
+    .navbar::after{
+        left: 1.3em;
+        width: 90vw;
+    }
+    
+    .auth-links{
+        gap: 2em;
+    }
+}
+
+@media (max-width: 380px){
+    .flashcards-header{
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .study-container{
+        width: 325px;
+        height: 650px;
+    }
+
+    #currentSubjectTitle{
+        margin: 10px 0;
+    }
+
+    .navigation-buttons{
+        position: absolute;
+        width: 300px;
+        height: 50px;
+        left: 15px;
+        bottom: 2px;
+        font-size: 0.8rem;
+    }
+
+    .check-button{
+        width: 100%;
+    }
+
+    .large.nav-button{
+        display: none;
+    }
+
+    .study-header{
+        flex-direction: column;
+    }
+
+    .study-header h2{
+        font-size: 1.25em;
+    }
+
+    .study-progress{
+        text-align: center;
+    }
+
+    .card-counter, .stats-counter{
+        font-size: 1rem;
+    }
+
+    .flashcard{
+        height: 225px;
+    }
+}
+
+@media (max-width: 355px){
+    .dashboard-title{
+        font-size: 20px;
+    }
+
+    .navbar::after{
+        left: 1em;
+        width: 90vw;
+        height: 2px;
+    }
+
+    .navbar{
+        padding: 15px;
+    }
+
+
+    .main{
+        padding: 0;
+    }
 }

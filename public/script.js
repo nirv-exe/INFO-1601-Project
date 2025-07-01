@@ -45,6 +45,8 @@ document.getElementById('logolink').addEventListener('click', function(e) {
 onAuthStateChanged(auth, (user) => {
   const logoutBtn = document.getElementById('logoutBtn');
   const createBtn = document.getElementById('createBtn');
+  const smallLogoutBtn = document.getElementById('small-logoutBtn');
+  const smallCreateBtn = document.getElementById('small-createBtn');
   const userDashboard = document.getElementById('userDashboard');
   const homepage = document.getElementById('homepage');
   const searchBar = document.getElementById('searchSub');
@@ -56,7 +58,7 @@ onAuthStateChanged(auth, (user) => {
       createBtn.style.display = 'inline-block';
       userDashboard.style.display = 'block';
       homepage.style.display = 'none';
-      searchBar.style.display = 'inline-block'; 
+      searchBar.style.display = 'flex'; 
       navBar.style.display = 'flex';
       document.getElementById('flashcardsView').style.display = 'none';
       console.log(user);
@@ -69,12 +71,13 @@ onAuthStateChanged(auth, (user) => {
       loadUserSubjects(user.uid);
   } else {
       // User is logged out
-      logoutBtn.style.display = 'none';
-      createBtn.style.display = 'none';
+      navBar.style.display = 'none';
       userDashboard.style.display = 'none';
-      homepage.style.display = 'flex';
+      homepage.style.display = 'flex'; 
       searchBar.style.display = 'none'; 
       document.getElementById('flashcardsView').style.display = 'none';
+      smallCreateBtn.style.display = 'none';
+      smallLogoutBtn.style.display = 'none';
   }
 });
 
@@ -609,6 +612,8 @@ function startStudySession() {
 
     document.getElementById('checkAnswerBtn').disabled = false;
     document.getElementById('nextCardBtn').disabled = false;
+    document.getElementById('small-nextCardBtn').disabled = false;
+    
 
     document.getElementById('studySummaryWrapper').remove();
 }
@@ -702,14 +707,20 @@ function loadStudyCard() {
     const answerInput = document.getElementById('userAnswerInput');
     const checkAnswerBtn = document.getElementById('checkAnswerBtn');
     const prevCardBtn = document.getElementById('prevCardBtn');
+    const smallprevCardBtn = document.getElementById('small-prevCardBtn');
+    const smallnextCardBtn = document.getElementById('small-nextCardBtn');
     const nextCardBtn = document.getElementById('nextCardBtn');
     const endStudyBtn = document.getElementById('endStudyBtn');
+    const smallendStudyBtn = document.getElementById('small-endStudyBtn');
 
     answerInput.addEventListener('click', (event) => event.stopPropagation());
     checkAnswerBtn.addEventListener('click', (event) => event.stopPropagation());
     prevCardBtn.addEventListener('click', (event) => event.stopPropagation());
+    smallprevCardBtn.addEventListener('click', (event) => event.stopPropagation());
     nextCardBtn.addEventListener('click', (event) => event.stopPropagation());
+    smallnextCardBtn.addEventListener('click', (event) => event.stopPropagation());
     endStudyBtn.addEventListener('click', (event) => event.stopPropagation());
+    smallendStudyBtn.addEventListener('click', (event) => event.stopPropagation());
 }
 
 // Normalize answer for comparison
@@ -728,8 +739,10 @@ document.getElementById('userAnswerInput').addEventListener('keypress', (e) => {
 });
 document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
 
+const smallnextButton = document.getElementById('small-nextCardBtn');
 const nextButton = document.getElementById('nextCardBtn');
 nextButton.disabled = false;
+smallnextButton.disabled = false;
 
 function checkAnswer() {
     const checkAnswerBtn = document.getElementById('checkAnswerBtn');
@@ -770,10 +783,12 @@ function checkAnswer() {
         {    
             correctAnswers++;
             nextButton.disabled = true;
+            smallnextButton.disabled = true
             setTimeout(() => {
                 if (currentCardIndex < studySessionCards.length - 1) {
                     currentCardIndex++;
                     nextButton.disabled = false;
+                    smallnextButton.disabled = false;
                     checkAnswerBtn.disabled = false;
                     loadStudyCard();
                 } else {
@@ -789,10 +804,12 @@ function checkAnswer() {
         answerInput.classList.add('input-incorrect');
         wrongAnswers++;
         nextButton.disabled = true;
+        smallnextButton.disabled = true;
         setTimeout(() => {
             if (currentCardIndex < studySessionCards.length - 1) {
                 currentCardIndex++;
                 nextButton.disabled = false;
+                smallnextButton.disabled = false; 
                 checkAnswerBtn.disabled = false;
                 loadStudyCard();
             } else {
@@ -807,6 +824,13 @@ function checkAnswer() {
 }
 
 document.getElementById('prevCardBtn').addEventListener('click', () => {
+    if (currentCardIndex > 0) {
+        currentCardIndex--;
+        loadStudyCard();
+    }
+});
+
+document.getElementById('small-prevCardBtn').addEventListener('click', () => {
     if (currentCardIndex > 0) {
         currentCardIndex--;
         loadStudyCard();
@@ -829,10 +853,26 @@ document.getElementById('nextCardBtn').addEventListener('click', () => {
     }
 });
 
+document.getElementById('small-nextCardBtn').addEventListener('click', () => {
+    if (currentCardIndex < studySessionCards.length - 1) {
+        currentCardIndex++;
+        loadStudyCard();
+    } else {
+        if (answeredTracker.includes(false)) {
+            showErrorPopup("⚠️ You must answer all questions.");
+            return;
+        }
+
+        showPopup(`Study session complete! Score: ${correctAnswers}/${studySessionCards.length}`);
+        endStudySession();
+    }
+});
+
 
 
 // End study session
 document.getElementById('endStudyBtn').addEventListener('click', endStudySession);
+document.getElementById('small-endStudyBtn').addEventListener('click', endStudySession);
 
 function endStudySession() {
     document.getElementById('studyMode').style.display = 'none';
